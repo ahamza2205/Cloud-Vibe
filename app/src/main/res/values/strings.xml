@@ -1,7 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cloud Vibe</string>
+    <string name="app_name">Cloud Vibes</string>
     <string name="open">Open Cloud Vibe</string>
     <string name="close">Close Cloud Vibe</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="windspeed">Wind: 0 km/h</string>
+    <string name="humidity">Humidity: 0%</string>
+    <string name="condition">Condition</string>
+    <string name="pressure">Pressure: 0 hPa</string>
+    <string name="visibility">Visibility: 0 km</string>
 </resources>

@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             R.id.nav_favorites -> replaceFragment(FavoritFragment())
             R.id.nav_exit -> finish()
         }
-
+        item.isChecked = true
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }

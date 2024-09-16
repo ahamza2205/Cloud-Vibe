@@ -4,7 +4,6 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="175dp"
-    android:background="@color/blue"
     android:gravity="bottom"
     android:padding="16dp">
 
@@ -16,10 +15,11 @@ android:src="@drawable/weather_nav_drawer_icon" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_gravity="center_vertical"
-        android:text="Cloud Vibe"
-        android:textColor="@color/white"
+        android:layout_marginStart="16dp"
+        android:fontFamily="@font/alegreya_sc_bold"
+        android:text="Cloud Vibes"
+        android:textColor="@color/mid_blue_sky"
         android:textSize="24dp"
         android:textStyle="bold" />
 

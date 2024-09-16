@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">أجواء السحابة</string>
+    <string name="open">فتح أجواء السحابة</string>
+    <string name="close">غلق أجواء السحابة</string>
+    <string name="windspeed">الرياح: 0 كم/س</string>
+    <string name="humidity">الرطوبة: 0%</string>
+    <string name="condition">حالة الطقس</string>
+        <string name="pressure">الضغط: 0 بار</string>
+    <string name="visibility">الرؤية: 0 كم</string>
+</resources>
