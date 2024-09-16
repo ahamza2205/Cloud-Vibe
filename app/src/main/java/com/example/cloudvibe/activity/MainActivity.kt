@@ -1,4 +1,4 @@
-package com.example.cloudvibe
+package com.example.cloudvibe.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -8,6 +8,7 @@ import androidx.core.view.GravityCompat
 
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.example.cloudvibe.R
 import com.example.cloudvibe.alert.view.WeatherAlertFragment
 import com.example.cloudvibe.favorit.view.FavoritFragment
 import com.example.cloudvibe.home.view.HomeFragment
