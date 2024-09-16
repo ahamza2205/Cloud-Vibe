@@ -126,4 +126,21 @@ dependencies {
     // ThreeTenABP for date/time handling
     implementation(libs.threetenabp)
 
+    // Material Components for the Navigation Drawer
+    implementation(libs.material)
+
+    // AndroidX Core
+    implementation(libs.androidx.core.ktx)
+
+    // AndroidX AppCompat
+    implementation(libs.androidx.appcompat)
+
+    // AndroidX ConstraintLayout
+    implementation(libs.androidx.constraintlayout)
+
+    // AndroidX Navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation (libs.androidx.appcompat)  // or the latest version
+
 }

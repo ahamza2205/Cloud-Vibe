@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+  <group
+    android:checkableBehavior="single">
+      <item
+        android:id="@+id/nav_home"
+        android:title="Home"
+        android:icon="@drawable/home" />
+      <item
+          android:id="@+id/nav_setting"
+          android:title="Settings"
+          android:icon="@drawable/settings" />
+      <item
+          android:id="@+id/nav_alarts"
+          android:title="Alerts"
+          android:icon="@drawable/alarms" />
+      <item
+          android:id="@+id/nav_favorites"
+          android:title="Favorites"
+          android:icon="@drawable/favorite" />
+  </group>
+    <item
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/nav_exit"
+                android:title="Exit"
+                android:icon="@drawable/exit_to_app" />
+        </menu>
+    </item>
+</menu>
