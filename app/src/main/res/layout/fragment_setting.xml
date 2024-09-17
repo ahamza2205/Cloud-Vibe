@@ -41,6 +41,7 @@
                     android:textSize="18dp" />
 
                 <RadioGroup
+                    android:id="@+id/radio_group_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

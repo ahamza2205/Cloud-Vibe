@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/mainActivity">
-
     <activity
         android:id="@+id/mainActivity"
         android:name="com.example.cloudvibe.activity.MainActivity"
@@ -14,7 +13,7 @@
         android:id="@+id/homeFragment"
         android:name="com.example.cloudvibe.home.view.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/favoritFragment"
         android:name="com.example.cloudvibe.favorit.view.FavoritFragment"
@@ -30,4 +29,9 @@
         android:name="com.example.cloudvibe.alert.view.WeatherAlertFragment"
         android:label="WeatherAlertFragment"
         tools:layout="@layout/fragment_weather_alert"/>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.cloudvibe.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map"/>
 </navigation>

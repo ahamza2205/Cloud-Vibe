@@ -1,8 +1,8 @@
 plugins {
-
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id("com.google.gms.google-services") // Apply the Google Services plugin
 }
 
 android {
@@ -143,5 +143,13 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation (libs.androidx.appcompat)  // or the latest version
+
+    // Google Maps SDK
+    implementation (libs.play.services.maps)
+    // Google Play Services Location
+    implementation (libs.play.services.location)
+    // Google Analytics
+    implementation (libs.firebase.analytics)
+    implementation ("org.osmdroid:osmdroid-android:6.1.12")
 
 }

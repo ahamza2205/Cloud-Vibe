@@ -1,11 +1,13 @@
 [versions]
 agp = "8.5.1"
+android = "10.5.0"
 androidxJunit = "1.1.5"
 appcompatVersion = "1.6.1"
 compiler = "4.15.1"
 converterGson = "2.11.0"
 coreKtxVersion = "1.10.1"
 espressoCoreVersion = "3.5.1"
+firebaseAnalytics = "22.1.0"
 glide = "4.12.0"
 glideVersion = "4.15.1"
 gson = "2.8.9"
@@ -33,8 +35,10 @@ roomRuntime = "2.6.1"
 threetenabp = "1.4.0"
 workRuntimeKtx = "2.9.1"
 core = "1.13.1"
+googleGmsGoogleServices = "4.4.2"
 
 [libraries]
+android = { module = "com.mapbox.maps:android", version.ref = "android" }
 androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-ktx-v1101 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
@@ -54,6 +58,7 @@ compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide
 compiler-v4151 = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 converter-gson-v2110 = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-v4151 = { module = "com.github.bumptech.glide:glide", version.ref = "glideVersion" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
@@ -78,3 +83,4 @@ androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
