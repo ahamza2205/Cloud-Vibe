@@ -32,12 +32,12 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Location"
                     android:backgroundTint="@color/light_clouds"
+                    android:fontFamily="@font/alegreya_sc_bold"
                     android:padding="12dp"
+                    android:text="@string/location"
                     android:textColor="@color/white"
-                    android:textSize="18dp"
-                    android:fontFamily="@font/alegreya_sc_bold"/>
+                    android:textSize="18dp" />
 
                 <RadioGroup
                     android:layout_width="match_parent"
@@ -49,21 +49,21 @@
                         android:id="@+id/rb_gps"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:text="GPS"
-                        android:textSize="18dp"
                         android:fontFamily="@font/alegreya_sc_bold"
+                        android:padding="8dp"
+                        android:text="@string/GPS"
                         android:textColor="@color/light_clouds"
-                        android:padding="8dp" />
+                        android:textSize="18dp" />
 
                     <RadioButton
                         android:id="@+id/rb_map"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:text="Map"
-                        android:textSize="18dp"
                         android:fontFamily="@font/alegreya_sc_bold"
+                        android:padding="8dp"
+                        android:text="@string/Map"
                         android:textColor="@color/light_clouds"
-                        android:padding="8dp" />
+                        android:textSize="18dp" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -81,12 +81,12 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Language"
                     android:backgroundTint="@color/light_clouds"
+                    android:fontFamily="@font/alegreya_sc_bold"
                     android:padding="12dp"
+                    android:text="@string/language"
                     android:textColor="@color/white"
-                    android:textSize="18dp"
-                    android:fontFamily="@font/alegreya_sc_bold"/>
+                    android:textSize="18dp" />
 
                 <RadioGroup
                     android:layout_width="match_parent"
@@ -98,21 +98,21 @@
                         android:id="@+id/rb_english"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:text="English"
-                        android:textSize="18dp"
                         android:fontFamily="@font/alegreya_sc_bold"
+                        android:padding="8dp"
+                        android:text="@string/English"
                         android:textColor="@color/light_clouds"
-                        android:padding="8dp" />
+                        android:textSize="18dp" />
 
                     <RadioButton
                         android:id="@+id/rb_arabic"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:text="Arabic"
-                        android:textSize="18dp"
                         android:fontFamily="@font/alegreya_sc_bold"
+                        android:padding="8dp"
+                        android:text="@string/Arabic"
                         android:textColor="@color/light_clouds"
-                        android:padding="8dp" />
+                        android:textSize="18dp" />
                 </RadioGroup>
             </LinearLayout>
         </LinearLayout>
@@ -138,12 +138,12 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Temperature"
                     android:backgroundTint="@color/light_clouds"
+                    android:fontFamily="@font/alegreya_sc_bold"
                     android:padding="12dp"
+                    android:text="@string/Temperature"
                     android:textColor="@color/white"
-                    android:textSize="18dp"
-                    android:fontFamily="@font/alegreya_sc_bold"/>
+                    android:textSize="18dp" />
 
                 <RadioGroup
                     android:layout_width="match_parent"
@@ -155,31 +155,31 @@
                         android:id="@+id/rb_celsius"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:text="Celsius"
-                        android:textSize="18dp"
                         android:fontFamily="@font/alegreya_sc_bold"
+                        android:padding="8dp"
+                        android:text="@string/Celsius"
                         android:textColor="@color/light_clouds"
-                        android:padding="8dp" />
+                        android:textSize="18dp" />
 
                     <RadioButton
                         android:id="@+id/rb_kelvin"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:text="Kelvin"
-                        android:textSize="18dp"
                         android:fontFamily="@font/alegreya_sc_bold"
+                        android:padding="8dp"
+                        android:text="@string/Kelvin"
                         android:textColor="@color/light_clouds"
-                        android:padding="8dp" />
+                        android:textSize="18dp" />
 
                     <RadioButton
                         android:id="@+id/rb_fahrenheit"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:text="Fahrenheit"
-                        android:textSize="18dp"
                         android:fontFamily="@font/alegreya_sc_bold"
+                        android:padding="8dp"
+                        android:text="@string/Fahrenheit"
                         android:textColor="@color/light_clouds"
-                        android:padding="8dp" />
+                        android:textSize="18dp" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -200,7 +200,7 @@
                     android:backgroundTint="@color/light_clouds"
                     android:fontFamily="@font/alegreya_sc_bold"
                     android:padding="12dp"
-                    android:text="Wind Speed"
+                    android:text="@string/WindSpeed"
                     android:textColor="@color/white"
                     android:textSize="18dp" />
 
@@ -214,21 +214,21 @@
                         android:id="@+id/rb_meter_sec"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:textSize="16dp"
                         android:fontFamily="@font/alegreya_sc_bold"
                         android:padding="8dp"
-                        android:text="Meter / Sec"
-                        android:textColor="@color/light_clouds" />
+                        android:text="@string/MeterSec"
+                        android:textColor="@color/light_clouds"
+                        android:textSize="16dp" />
 
                     <RadioButton
                         android:id="@+id/rb_mile_hour"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:textSize="16dp"
                         android:fontFamily="@font/alegreya_sc_bold"
                         android:padding="8dp"
-                        android:text="Mile / Hour"
-                        android:textColor="@color/light_clouds" />
+                        android:text="@string/MileHour"
+                        android:textColor="@color/light_clouds"
+                        android:textSize="16dp" />
                 </RadioGroup>
             </LinearLayout>
         </LinearLayout>
@@ -246,12 +246,12 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Notifications"
                 android:backgroundTint="@color/light_clouds"
+                android:fontFamily="@font/alegreya_sc_bold"
                 android:padding="12dp"
+                android:text="@string/Notifications"
                 android:textColor="@color/white"
-                android:textSize="18dp"
-                android:fontFamily="@font/alegreya_sc_bold"/>
+                android:textSize="18dp" />
 
             <RadioGroup
                 android:layout_width="match_parent"
@@ -263,21 +263,21 @@
                     android:id="@+id/rb_enable"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:text="Enable"
-                    android:textSize="18dp"
                     android:fontFamily="@font/alegreya_sc_bold"
+                    android:padding="8dp"
+                    android:text="@string/Enable"
                     android:textColor="@color/light_clouds"
-                    android:padding="8dp" />
+                    android:textSize="18dp" />
 
                 <RadioButton
                     android:id="@+id/rb_disable"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:textSize="18dp"
-                    android:text="Disable"
                     android:fontFamily="@font/alegreya_sc_bold"
+                    android:padding="8dp"
+                    android:text="@string/Disable"
                     android:textColor="@color/light_clouds"
-                    android:padding="8dp" />
+                    android:textSize="18dp" />
             </RadioGroup>
         </LinearLayout>
     </LinearLayout>
