@@ -13,5 +13,21 @@
     <string name="alerts">التنبيهات</string>
     <string name="favorites">المفضلة</string>
     <string name="exit">خروج</string>
+    <string name="location">الموقع</string>
+    <string name="language">اللغة</string>
+    <string name="GPS">GPS</string>
+    <string name="Map">الخريطة</string>
+    <string name="English">الأنجليزية</string>
+    <string name="Arabic">العربية</string>
+    <string name="Temperature">درجة الحرارة</string>
+    <string name="Celsius">°C</string>
+    <string name="Kelvin">Kelvin</string>
+    <string name="Fahrenheit">°F</string>
+    <string name="WindSpeed">سرعة الرياح</string>
+    <string name="MeterSec">متر / ثانية</string>
+    <string name="MileHour">ميل / ساعه</string>
+    <string name="Notifications">التنبيهات</string>
+    <string name="Enable">تمكين</string>
+    <string name="Disable">تعطيل</string>
 
 </resources>

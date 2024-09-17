@@ -13,4 +13,20 @@
     <string name="alerts">Alerts</string>
     <string name="favorites">Favorites</string>
     <string name="exit">Exit</string>
+    <string name="location">Location</string>
+    <string name="language">Language</string>
+    <string name="GPS">GPS</string>
+    <string name="Map">Map</string>
+    <string name="English">English</string>
+    <string name="Arabic">Arabic</string>
+    <string name="Temperature">Temperature</string>
+    <string name="Celsius">°C</string>
+    <string name="Kelvin">Kelvin</string>
+    <string name="Fahrenheit">°F</string>
+    <string name="WindSpeed">Wind Speed</string>
+    <string name="MeterSec">Meter / Sec</string>
+    <string name="MileHour">Mile / Hour</string>
+    <string name="Notifications">Notifications</string>
+    <string name="Enable">Enable</string>
+    <string name="Disable">Disable</string>
 </resources>
