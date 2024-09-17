@@ -150,6 +150,7 @@ dependencies {
     implementation (libs.play.services.location)
     // Google Analytics
     implementation (libs.firebase.analytics)
-    implementation ("org.osmdroid:osmdroid-android:6.1.12")
+    // Google Maps Android SDK
+    implementation (libs.osmdroid.android)
 
 }
