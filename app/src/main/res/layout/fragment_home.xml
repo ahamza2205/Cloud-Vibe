@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
-            android:fontFamily="@font/alegreya_sc_bold"
+            android:fontFamily="@font/afacad_bold"
             android:text="Location"
             android:textColor="@color/white"
             android:textSize="32dp"
@@ -33,7 +33,7 @@
             android:id="@+id/tv_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/alegreya_sc_bold"
+            android:fontFamily="@font/afacad_bold"
             android:text="0"
             android:textColor="@color/white"
             android:textSize="100dp"
@@ -46,9 +46,9 @@
             android:id="@+id/tv_condition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/alegreya_sans_sc_medium"
-            android:textColor="@color/white_transparent"
+            android:fontFamily="@font/afacad_semibold"
             android:text="@string/condition"
+            android:textColor="@color/white_transparent"
             android:textSize="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/alegreya_sc_bold"
+                        android:fontFamily="@font/afacad_medium"
                         android:gravity="center"
                         android:text="@string/windspeed"
                         android:textColor="@color/white"
@@ -131,7 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/alegreya_sc_bold"
+                        android:fontFamily="@font/afacad_medium"
                         android:gravity="center"
                         android:text="@string/humidity"
                         android:textColor="@color/white"
@@ -166,11 +166,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/alegreya_sc_bold"
+                        android:fontFamily="@font/afacad_medium"
                         android:gravity="center"
                         android:text="Pressure: 0 hPa"
                         android:textColor="@color/white"
-                        android:textSize="14dp" />
+                        android:textSize="12dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -202,7 +202,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="50dp"
-            android:fontFamily="@font/alegreya_sans_sc_medium"
+            android:fontFamily="@font/afacad_medium"
             android:text="Local Time: Unknown"
             android:textColor="@color/white"
             android:textSize="18dp"
@@ -226,164 +226,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/llWeatherDetails"
             app:layout_constraintVertical_bias="1.0" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:gravity="center_horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerViewForecast">
-
-            <!-- First CardView -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/white_transparent"
-                app:cardCornerRadius="8dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:srcCompat="@drawable/humidity" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Card 1"
-                        android:textColor="@color/white"
-                        android:textSize="18dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Second CardView -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/white_transparent"
-                app:cardCornerRadius="8dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:srcCompat="@drawable/humidity" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Card 2"
-                        android:textColor="@color/white"
-                        android:textSize="18dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Repeat for the other three CardViews -->
-
-            <!-- Third CardView -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/white_transparent"
-                app:cardCornerRadius="8dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:srcCompat="@drawable/humidity" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Card 3"
-                        android:textColor="@color/white"
-                        android:textSize="18dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Fourth CardView -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/white_transparent"
-                app:cardCornerRadius="8dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:srcCompat="@drawable/humidity" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Card 4"
-                        android:textColor="@color/white"
-                        android:textSize="18dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Fifth CardView -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/white_transparent"
-                app:cardCornerRadius="8dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:srcCompat="@drawable/humidity" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Card 5"
-                        android:textColor="@color/white"
-                        android:textSize="18dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

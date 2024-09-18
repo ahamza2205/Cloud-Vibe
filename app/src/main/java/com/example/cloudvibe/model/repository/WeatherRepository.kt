@@ -5,9 +5,7 @@ import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.network.WeatherApiService
 import com.example.cloudvibe.model.network.data.ForecastItem
-import com.example.cloudvibe.model.network.data.Hourly
-import retrofit2.Response
-import com.example.cloudvibe.model.network.data.Wind
+import com.example.cloudvibe.model.network.data.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 
 class WeatherRepository(
@@ -27,31 +25,8 @@ class WeatherRepository(
             // Log response data
             Log.d(TAG, "Weather API response: $response")
 
-            // Safely handle nullable response fields
-            val hourlyList: List<Hourly> = response.hourly ?: emptyList()
-            val temperature: Double = response.main?.temp ?: 0.0
-            val description: String = response.weather.firstOrNull()?.description ?: ""
-            val wind: Wind = response.wind // Assuming this is non-null
-            val timezone: Int = response.timezone
-            val pressure: Int = response.main?.pressure ?: 0
-            val humidity: Int = response.main?.humidity ?: 0
-            val country: String = response.sys.country
-            val sunrise: Long = response.sys.sunrise
-            val sunset: Long = response.sys.sunset
-
-            val weatherEntity = WeatherEntity(
-                temperature = temperature,
-                description = description,
-                timestamp = System.currentTimeMillis(),
-                wind = wind,
-                timezone = timezone,
-                pressure = pressure,
-                humidity = humidity,
-                country = country,
-                sunrise = sunrise,
-                sunset = sunset,
-                hourlyData = hourlyList
-            )
+            // Map response to WeatherEntity
+            val weatherEntity = mapWeatherResponseToEntity(response)
 
             // Log the weather entity being saved
             Log.d(TAG, "WeatherEntity to be saved: $weatherEntity")
@@ -120,5 +95,22 @@ class WeatherRepository(
             Log.e("WeatherRepository", "No local forecasts available") // Failure log
         }
         return forecasts
+    }
+
+    fun mapWeatherResponseToEntity(response: WeatherResponse): WeatherEntity {
+        return WeatherEntity(
+            locationName = response.name,
+            country = response.sys.country,
+            localtime = response.dt.toString(), // Convert timestamp to local time if needed
+            temperature = response.main.temp,
+            description = response.weather.firstOrNull()?.description ?: "",
+            windSpeed = response.wind.speed,
+            humidity = response.main.humidity,
+            timestamp = response.dt,
+            pressure = response.main.pressure,
+            sunrise = response.sys.sunrise,
+            sunset = response.sys.sunset,
+            hourlyData = response.hourly
+        )
     }
 }

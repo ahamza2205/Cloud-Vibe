@@ -43,10 +43,10 @@ data class Weather(
 @TypeConverters(Converters::class)
 @Entity
 data class Main(
-    val temp: Double,
+    val temp: Float,
     val feels_like: Double,
-    val temp_min: Double,
-    val temp_max: Double,
+    val temp_min: Float,
+    val temp_max: Float,
     val pressure: Int,
     val humidity: Int,
     val sea_level: Int,

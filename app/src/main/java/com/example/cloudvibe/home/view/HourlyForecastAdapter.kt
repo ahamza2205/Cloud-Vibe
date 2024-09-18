@@ -15,11 +15,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.cloudvibe.R
 import com.example.cloudvibe.model.network.data.Hourly
 import com.example.cloudvibe.utils.UnitConverter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 class HourlyForecastAdapter(
-    private var dataList: MutableList<Hourly>,
+    private var dataList: List<Hourly>,
     private var symbol: String,
     private var speedUnit: String
 ) : RecyclerView.Adapter<HourlyForecastAdapter.MyViewHolder>() {
@@ -38,31 +39,40 @@ class HourlyForecastAdapter(
     }
 
     fun updateList(newList: List<Hourly>, newSymbol: String, newSpeedSymbol: String) {
-        dataList.clear()
-        dataList.addAll(newList)
+        // Get the current date in day format
+        val currentDay = getCurrentDay()
+
+        // Filter data to include only the hours of the current day
+        dataList = newList.filter {
+            val hourDay = getDayFromTimestamp(it.dt)
+            hourDay == currentDay
+        }
         symbol = newSymbol
         speedUnit = newSpeedSymbol
         notifyDataSetChanged()
     }
 
+    private fun getCurrentDay(): Int {
+        val calendar = Calendar.getInstance()
+        return calendar.get(Calendar.DAY_OF_YEAR)
+    }
+
+    private fun getDayFromTimestamp(timestamp: Long): Int {
+        val date = Date(timestamp * 1000L)  // Convert seconds to milliseconds
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        return calendar.get(Calendar.DAY_OF_YEAR)
+    }
+
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentHour: Hourly = dataList[position]
-        val temp = currentHour.temp ?: 0.0
+        val tempKelvin = currentHour.temp ?: 0.0
         val icon = currentHour.weather[0].icon
         val link = "https://openweathermap.org/img/wn/$icon@2x.png"
         val localHour = getLocalHourFromUnixTimestamp(currentHour.dt)
-        val formattedTemp = when (symbol) {
-            "°C" -> "${UnitConverter.kelvinToCelsius(temp)}°C"
-            "°F" -> "${UnitConverter.kelvinToFahrenheit(temp)}°F"
-            else -> "${temp}K"
-        }
 
-        val windSpeed = currentHour.windSpeed ?: 0.0
-        val formattedWindSpeed = if (speedUnit == "km/h") {
-            UnitConverter.meterPerSecondToKilometersPerHour(windSpeed)
-        } else {
-            UnitConverter.meterPerSecondToMilesPerHour(windSpeed)
-        }
+        val tempCelsius = UnitConverter.kelvinToCelsius(tempKelvin)
+        val formattedTemp = String.format(Locale.getDefault(), "%.2f°C", tempCelsius)
 
         val formattedTime = formatHour(localHour)
         Log.i("Hour", "onBindViewHolder: $localHour")
@@ -81,8 +91,8 @@ class HourlyForecastAdapter(
         val iconView: ImageView = itemView.findViewById(R.id.ivWeatherIcon)
     }
 
-    private fun getLocalHourFromUnixTimestamp(gmtUnixTimestamp: Int): Int {
-        val date = Date(gmtUnixTimestamp * 1000L)
+    private fun getLocalHourFromUnixTimestamp(gmtUnixTimestamp: Long): Int {
+        val date = Date(gmtUnixTimestamp * 1000L)  // Convert seconds to milliseconds
         val timeZone = TimeZone.getDefault()
         val sdf = SimpleDateFormat("HH", Locale.getDefault())
         sdf.timeZone = timeZone
@@ -95,3 +105,32 @@ class HourlyForecastAdapter(
         return "$displayHour $dayNight"
     }
 }
+
+
+/*
+override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+    val currentHour: Hourly = dataList[position]
+    val temp = currentHour.temp ?: 0.0
+    val icon = currentHour.weather[0].icon
+    val link = "https://openweathermap.org/img/wn/$icon@2x.png"
+    val localHour = getLocalHourFromUnixTimestamp(currentHour.dt)
+
+    // Format temperature based on symbol
+    val formattedTemp = when (symbol) {
+        "°C" -> String.format(Locale.getDefault(), "%.2f°C", UnitConverter.kelvinToCelsius(temp))
+        "°F" -> String.format(Locale.getDefault(), "%.2f°F", UnitConverter.kelvinToFahrenheit(temp))
+        else -> String.format(Locale.getDefault(), "%.2fK", temp)
+    }
+
+    // Format the time
+    val formattedTime = formatHour(localHour)
+    Log.i("Hour", "onBindViewHolder: $localHour")
+
+    holder.degreeTV.text = formattedTemp
+    holder.timeTV.text = formattedTime
+    Glide.with(context)
+        .load(link)
+        .apply(RequestOptions().override(100, 100))
+        .into(holder.iconView)
+}
+* */

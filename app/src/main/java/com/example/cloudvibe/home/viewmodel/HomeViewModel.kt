@@ -19,7 +19,6 @@ class HomeViewModel(private val repository: WeatherRepository) : ViewModel() {
     private val _forecastWeather = MutableLiveData<List<ForecastItem>>()
     val forecastWeather: LiveData<List<ForecastItem>> get() = _forecastWeather
 
-    val savedWeather: LiveData<List<WeatherEntity>> = repository.getSavedWeather().asLiveData()
 
     fun fetchCurrentWeather(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch {

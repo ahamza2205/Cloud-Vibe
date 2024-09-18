@@ -1,12 +1,12 @@
 package com.example.cloudvibe.utils
 
 object UnitConverter {
-    fun kelvinToCelsius(kelvin: Double): Double {
-        return kelvin - 273.15
+    fun kelvinToCelsius(kelvin: Number): Float {
+        return kelvin.toFloat() - 273.15f
     }
 
-    fun kelvinToFahrenheit(kelvin: Double): Double {
-        return kelvin * 9/5 - 459.67
+    fun kelvinToFahrenheit(kelvin: Number): Float {
+        return kelvin.toFloat() * 9/5 - 459.67f
     }
 
     fun meterPerSecondToMilesPerHour(mps: Double): Double {

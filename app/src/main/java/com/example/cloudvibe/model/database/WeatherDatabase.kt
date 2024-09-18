@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.cloudvibe.model.network.data.ForecastItem
 
-@Database(entities = [WeatherEntity::class, ForecastItem::class], version = 2) // Change version to 2
+@Database(entities = [WeatherEntity::class, ForecastItem::class], version = 3) // Change version to 2
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase : RoomDatabase() {
     abstract fun weatherDao(): WeatherDao
