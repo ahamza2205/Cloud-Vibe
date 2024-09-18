@@ -146,11 +146,17 @@ dependencies {
 
     // Google Maps SDK
     implementation (libs.play.services.maps)
+
     // Google Play Services Location
     implementation (libs.play.services.location)
+
     // Google Analytics
     implementation (libs.firebase.analytics)
+
     // Google Maps Android SDK
     implementation (libs.osmdroid.android)
+
+    // JSON to Kotlin
+    implementation (libs.library)
 
 }
