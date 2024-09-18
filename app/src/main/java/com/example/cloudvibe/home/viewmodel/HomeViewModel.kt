@@ -1,38 +1,49 @@
 package com.example.cloudvibe.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.cloudvibe.model.network.data.CurrentWeatherResponse
-import com.example.cloudvibe.model.network.data.FiveDayForecastResponse
-import com.example.cloudvibe.model.network.data.HourlyForecastResponse
 import com.example.cloudvibe.model.repository.WeatherRepository
+import com.example.cloudvibe.model.database.WeatherEntity
+import com.example.cloudvibe.model.network.data.ForecastItem
 import kotlinx.coroutines.launch
 
-class HomeViewModel (private val repository: WeatherRepository) : ViewModel() {
+class HomeViewModel(private val repository: WeatherRepository) : ViewModel() {
 
-    private val _currentWeather = MutableLiveData<CurrentWeatherResponse>()
-    val currentWeather: LiveData<CurrentWeatherResponse> get() = _currentWeather
+    private val _currentWeather = MutableLiveData<Result<WeatherEntity>>()
+    val currentWeather: LiveData<Result<WeatherEntity>> get() = _currentWeather
 
-    private val _hourlyForecast = MutableLiveData<HourlyForecastResponse>()
-    val hourlyForecast: LiveData<HourlyForecastResponse> get() = _hourlyForecast
+    private val _forecastWeather = MutableLiveData<List<ForecastItem>>()
+    val forecastWeather: LiveData<List<ForecastItem>> get() = _forecastWeather
 
-    private val _fiveDayForecast = MutableLiveData<FiveDayForecastResponse>()
-    val fiveDayForecast: LiveData<FiveDayForecastResponse> get() = _fiveDayForecast
+    val savedWeather: LiveData<List<WeatherEntity>> = repository.getSavedWeather().asLiveData()
 
-    fun getCurrentWeather(lat: Double, lon: Double, apiKey: String) = viewModelScope.launch {
-        val response = repository.getCurrentWeather(lat, lon, apiKey)
-        _currentWeather.postValue(response!!)
+    fun fetchCurrentWeather(lat: Double, lon: Double, apiKey: String) {
+        viewModelScope.launch {
+            val result = repository.getCurrentWeather(lat, lon, apiKey)
+            _currentWeather.postValue(result)
+        }
     }
 
-    fun getHourlyForecast(lat: Double, lon: Double, apiKey: String) = viewModelScope.launch {
-        val response = repository.getHourlyForecast(lat, lon, apiKey)
-        _hourlyForecast.postValue(response!!)
+    fun loadWeather(lat: Double, lon: Double, apiKey: String) {
+        viewModelScope.launch {
+            repository.fetchAndSaveWeather(lat, lon, apiKey)
+            _forecastWeather.postValue(repository.getLocalForecasts())
+        }
     }
 
-    fun getFiveDayForecast(lat: Double, lon: Double, apiKey: String) = viewModelScope.launch {
-        val response = repository.getFiveDayForecast(lat, lon, apiKey)
-        _fiveDayForecast.postValue(response!!)
+    fun loadLocalForecasts() {
+        viewModelScope.launch {
+            try {
+                val data = repository.getLocalForecasts()
+                _forecastWeather.postValue(data)
+            } catch (e: Exception) {
+                // Handle error
+                Log.e("WeatherViewModel", "Error loading local forecasts: ${e.message}", e)
+            }
+        }
     }
 }

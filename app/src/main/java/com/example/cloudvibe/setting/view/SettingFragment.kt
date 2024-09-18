@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
 import com.example.cloudvibe.home.view.HomeFragment
 import com.example.cloudvibe.activity.MainActivity
-import com.example.cloudvibe.map.view.MapFragment
+import com.example.cloudvibe.map.MapFragment
 
 class SettingFragment : Fragment() {
 

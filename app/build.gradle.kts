@@ -3,6 +3,8 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.gms.google-services") // Apply the Google Services plugin
+    id ("dagger.hilt.android.plugin")
+
 }
 
 android {
@@ -158,5 +160,11 @@ dependencies {
 
     // JSON to Kotlin
     implementation (libs.library)
+
+    // Dagger Hilt
+    implementation (libs.hilt.android)
+    kapt (libs.hilt.android.compiler)
+
+    implementation (libs.gson.v2110)
 
 }

@@ -1,4 +1,4 @@
-package com.example.cloudvibe.map.view
+package com.example.cloudvibe.map
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -13,8 +13,6 @@ import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.tasks.OnSuccessListener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView

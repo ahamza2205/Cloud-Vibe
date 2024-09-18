@@ -13,5 +13,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:8.0.0")
         classpath("com.google.gms:google-services:4.3.15") // For Google Maps and Firebase
+        classpath ("com.google.dagger:hilt-android-gradle-plugin:2.52") // For Dagger Hilt
+
     }
 }
