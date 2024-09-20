@@ -17,17 +17,22 @@ class HomeViewModel(private val repository: WeatherRepository) : ViewModel() {
     private val _savedForecast = MutableStateFlow<List<ForecastData>>(emptyList())
     val savedForecast: StateFlow<List<ForecastData>> = _savedForecast
 
-    fun fetchAndDisplayWeather(lat: Double, lon: Double, apiKey: String) {
+    fun fetchAndDisplayWeather(lat: Double, lon: Double, units: String ,language: String, apiKey: String) {
         viewModelScope.launch {
-            repository.getWeatherFromApiAndSaveToLocal(lat, lon, apiKey).collect { weatherList ->
-                _savedWeather.value = weatherList
+            try {
+                repository.getWeatherFromApiAndSaveToLocal(lat, lon, units, language, apiKey).collect { weatherList ->
+                    _savedWeather.value = weatherList
+                }
+            } catch (e: Exception) {
+                // Handle the error
+                _savedWeather.value = emptyList() // or set an error state
             }
         }
     }
 
-    fun fetchAndDisplayForecast(lat: Double, lon: Double, apiKey: String) {
+    fun fetchAndDisplayForecast(lat: Double, lon: Double, units: String ,language: String, apiKey: String) {
         viewModelScope.launch {
-            repository.fetchForecastFromApiAndSave(lat, lon, apiKey).collect { forecastList ->
+            repository.fetchForecastFromApiAndSave(lat, lon, units, language, apiKey).collect { forecastList ->
                 _savedForecast.value = forecastList
             }
         }

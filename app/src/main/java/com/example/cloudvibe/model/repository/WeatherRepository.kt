@@ -22,11 +22,11 @@ class WeatherRepository(
 
     // Weather data
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun getWeatherFromApiAndSaveToLocal(lat: Double, lon: Double, apiKey: String): Flow<List<WeatherEntity>> {
+    suspend fun getWeatherFromApiAndSaveToLocal(lat: Double, lon: Double, units: String ,language: String,apiKey: String) : Flow<List<WeatherEntity>> {
         return flow {
             try {
                 Log.d(TAG, "Fetching current weather and saving to local for lat: $lat, lon: $lon")
-                val response = weatherApiService.getCurrentWeather(lat, lon, apiKey)
+                val response = weatherApiService.getCurrentWeather(lat, lon,units,language , apiKey)
                 Log.d(TAG, "Received weather response for saving: $response")
                 val weatherEntity = mapWeatherResponseToEntity(response)
                 weatherDao.insertWeather(weatherEntity)
@@ -48,11 +48,11 @@ class WeatherRepository(
 
     // Forecast data
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun fetchForecastFromApiAndSave(lat: Double, lon: Double, apiKey: String): Flow<List<ForecastData>> {
+    suspend fun fetchForecastFromApiAndSave(lat: Double, lon: Double, units: String ,language: String,apiKey: String): Flow<List<ForecastData>> {
         return flow {
             Log.d(TAG, "Fetching forecast weather from API for lat: $lat, lon: $lon")
             try {
-                val response = weatherApiService.getForecastWeather(lat, lon, apiKey)
+                val response = weatherApiService.getForecastWeather(lat, lon,units,language , apiKey)
                 response.body()?.let { forecastResponse ->
                     val forecastList = mapForecastResponseToData(forecastResponse)
                     Log.d(TAG, "Received forecast response: $forecastResponse")
@@ -72,6 +72,7 @@ class WeatherRepository(
     }
 
     fun getSavedForecast(): Flow<List<ForecastData>> {
+        Log.d(TAG, "Fetching saved forecast from local database")
         return weatherDao.getAllForecasts()
     }
 }

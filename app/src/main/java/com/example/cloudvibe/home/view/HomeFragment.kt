@@ -25,7 +25,6 @@ import com.example.cloudvibe.databinding.FragmentHomeBinding
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.database.toHourly
 import com.example.cloudvibe.model.network.data.Hourly
-import com.example.cloudvibe.utils.UnitConverter.kelvinToCelsius
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -34,13 +33,12 @@ import java.util.TimeZone
 
 class HomeFragment : Fragment() {
 
+
     private lateinit var binding: FragmentHomeBinding
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var homeViewModel: HomeViewModel
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     override fun onCreateView(
@@ -104,8 +102,10 @@ class HomeFragment : Fragment() {
                 for (location: Location in locationResult.locations) {
                     val lat = location.latitude
                     val lon = location.longitude
-                    homeViewModel.fetchAndDisplayWeather(lat, lon, "7af08d0e1d543aea9b340405ceed1c3d")
-                    homeViewModel.fetchAndDisplayForecast(lat, lon, "7af08d0e1d543aea9b340405ceed1c3d")
+                    val units = "metric"
+                    val language = "en"
+                    homeViewModel.fetchAndDisplayWeather(lat, lon, units, language ,  "7af08d0e1d543aea9b340405ceed1c3d")
+                    homeViewModel.fetchAndDisplayForecast(lat, lon, units, language ,  "7af08d0e1d543aea9b340405ceed1c3d")
                 }
             }
         }
@@ -139,11 +139,13 @@ class HomeFragment : Fragment() {
     @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun displayWeatherData(weatherEntity: WeatherEntity) {
         with(binding) {
-            val temperatureInCelsius = kelvinToCelsius(weatherEntity.temperature)
             tvLocation.text = weatherEntity.locationName
             tvCountry.text = " ${weatherEntity.country}"
             tvLocalTime.text = convertUnixTimeToTime(weatherEntity.timestamp)
-            tvTemperature.text = String.format("%.1f °C", temperatureInCelsius)
+
+            // Pass the temperature value to String.format
+            tvTemperature.text = String.format("%.1f ", weatherEntity.temperature)
+
             tvCondition.text = weatherEntity.description
             tvWindSpeed.text = "Wind: ${weatherEntity.windSpeed} km/h"
             tvHumidity.text = "Humidity: ${weatherEntity.humidity} %"
