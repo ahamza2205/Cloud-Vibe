@@ -4,11 +4,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.cloudvibe.model.network.data.ForecastItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeatherDao {
+
+    // weather table
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeather(weather: WeatherEntity)
 
@@ -18,12 +19,16 @@ interface WeatherDao {
     @Query("SELECT * FROM weather ORDER BY timestamp DESC")
     fun getAllWeather(): Flow<List<WeatherEntity>>
 
-    @Query("SELECT * FROM forecast_item")
-    suspend fun getAllForecasts(): List<ForecastItem>
 
-    @Query("DELETE FROM forecast_item")
+    // forecast data table
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertForecast(forecastData: List<ForecastData>)
+
+    @Query("DELETE FROM forecast_data")
     suspend fun clearForecasts()
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertForecast(forecasts: List<ForecastItem>)
+    @Query("SELECT * FROM forecast_data")
+    fun getAllForecasts(): Flow<List<ForecastData>>
 }
+
+

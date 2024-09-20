@@ -29,10 +29,7 @@ import android.widget.Toast
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
 
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +51,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             navigationView.setCheckedItem(R.id.nav_home)
         }
 
-        // Initialize FusedLocationProviderClient
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        // Check for location permissions
-        checkLocationPermission()
     }
 
     override fun onNavigationItemSelected(item: android.view.MenuItem): Boolean {
@@ -87,63 +79,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             onBackPressedDispatcher.onBackPressed()
-        }
-    }
-
-    // Check and request location permissions
-    private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        } else {
-            getLocation()
-        }
-    }
-
-    // Handle permission request result
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                getLocation()
-            } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    // Get the location
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-        val locationRequest = LocationRequest.Builder(
-            10000L
-        ).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).build()
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location: Location in locationResult.locations) {
-                    Toast.makeText(this@MainActivity, "Location: ${location.latitude}, ${location.longitude}", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::fusedLocationClient.isInitialized) {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
         }
     }
 }

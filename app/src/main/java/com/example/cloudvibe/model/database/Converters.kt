@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.room.TypeConverter
 import com.example.cloudvibe.model.network.data.Clouds
-import com.example.cloudvibe.model.network.data.Daily
 import com.example.cloudvibe.model.network.data.Hourly
 import com.example.cloudvibe.model.network.data.Main
 import com.example.cloudvibe.model.network.data.Sys
@@ -13,8 +12,6 @@ import com.example.cloudvibe.model.network.data.Weather
 import com.example.cloudvibe.model.network.data.Wind
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import org.checkerframework.checker.units.qual.Current
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class Converters {

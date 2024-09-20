@@ -39,18 +39,21 @@ class HourlyForecastAdapter(
     }
 
     fun updateList(newList: List<Hourly>, newSymbol: String, newSpeedSymbol: String) {
-        // Get the current date in day format
+        // Get the current day of the year
         val currentDay = getCurrentDay()
 
-        // Filter data to include only the hours of the current day
+        // Filter the data to include only hours of the current day
         dataList = newList.filter {
             val hourDay = getDayFromTimestamp(it.dt)
             hourDay == currentDay
         }
+
+        // Update units and notify the adapter
         symbol = newSymbol
         speedUnit = newSpeedSymbol
         notifyDataSetChanged()
     }
+
 
     private fun getCurrentDay(): Int {
         val calendar = Calendar.getInstance()
@@ -116,7 +119,7 @@ override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
     val localHour = getLocalHourFromUnixTimestamp(currentHour.dt)
 
     // Format temperature based on symbol
-    val formattedTemp = when (symbol) {
+    val formattedTemp = when (symbol) 5{
         "°C" -> String.format(Locale.getDefault(), "%.2f°C", UnitConverter.kelvinToCelsius(temp))
         "°F" -> String.format(Locale.getDefault(), "%.2f°F", UnitConverter.kelvinToFahrenheit(temp))
         else -> String.format(Locale.getDefault(), "%.2fK", temp)

@@ -21,7 +21,7 @@ data class WeatherResponse(
     val id: Int,
     val name: String,
     val cod: Int,
-    @SerializedName("hourly") val hourly: List<Hourly>? = null,
+    @SerializedName("hourly") val hourly: List<Hourly>?
 )
 @TypeConverters(Converters::class)
 @Entity

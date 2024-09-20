@@ -21,5 +21,4 @@ data class WeatherEntity(
     val pressure: Int,
     val sunrise: Long,
     val sunset: Long,
-    @ColumnInfo(name = "hourly_data") val hourlyData: List<Hourly>?
 )
