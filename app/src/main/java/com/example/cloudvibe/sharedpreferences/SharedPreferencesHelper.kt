@@ -18,14 +18,14 @@ class SharedPreferencesHelper (context : Context) {
          }
     }
     // get latitude and longitude from shared preferences
-    fun getLocation() : Pair<Double, Double> {
+    fun getLocation() : Pair<Double, Double>? {
       val lat = preferences.getString("latitude", null)
       val lon = preferences.getString("longitude", null)
       return if (lat != null && lon != null) {
           Pair(lat.toDouble(), lon.toDouble())
       } else {
-          Pair(0.0, 0.0)
-      }
+             return null
+         }
     }
 
 

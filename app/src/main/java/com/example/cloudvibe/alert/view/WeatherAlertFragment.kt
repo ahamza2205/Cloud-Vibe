@@ -1,5 +1,6 @@
 package com.example.cloudvibe.alert.view
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
@@ -23,21 +24,20 @@ import java.util.*
 
 class WeatherAlertFragment : Fragment() {
 
+    private val notificationChannelId = "channel_id"
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weather_alert, container, false)
 
-        // Create Notification Channel
         createNotificationChannel()
 
-        // FAB to open dialog for setting alarm or notification
         val fabAddAlert: FloatingActionButton = view.findViewById(R.id.fab_add_alert)
         fabAddAlert.setOnClickListener {
-            showAlertDialog() // Show dialog when FAB is clicked
+            showAlertDialog()
         }
 
         return view
@@ -46,7 +46,7 @@ class WeatherAlertFragment : Fragment() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "channel_id",
+                notificationChannelId,
                 "Weather Alerts",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
@@ -61,26 +61,20 @@ class WeatherAlertFragment : Fragment() {
     private fun showAlertDialog() {
         val calendar = Calendar.getInstance()
 
-        // First, show DatePickerDialog
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
-                // Set chosen date in the calendar
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                // After picking the date, show TimePickerDialog
                 TimePickerDialog(
                     requireContext(),
                     { _, hourOfDay, minute ->
-                        // Set chosen time in the calendar
                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                         calendar.set(Calendar.MINUTE, minute)
 
-                        // Show dialog for selecting Alarm or Notification
                         showTypeDialog(calendar)
-
                     }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false
                 ).show()
             },
@@ -93,54 +87,70 @@ class WeatherAlertFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showTypeDialog(calendar: Calendar) {
-        // Dialog to choose Alarm or Notification
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Select Type")
 
-        // Options for the user
         val types = arrayOf("Alarm", "Notification")
         builder.setItems(types) { _, which ->
             when (which) {
-                0 -> setAlarm(calendar) // Set Alarm
-                1 -> showNotification(calendar) // Show Notification
+                0 -> checkAlarmPermission(calendar)
+                1 -> checkNotificationPermission(calendar)
             }
         }
         builder.show()
     }
 
+    private fun checkAlarmPermission(calendar: Calendar) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestExactAlarmPermission(calendar)
+        } else {
+            setAlarm(calendar)
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun checkNotificationPermission(calendar: Calendar) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermission(calendar)
+        } else {
+            showNotification(calendar)
+        }
+    }
+
+
     @SuppressLint("MissingPermission")
     private fun setAlarm(calendar: Calendar) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            requestExactAlarmPermission()
-        }
-
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
+
+        // Pass the necessary data
+        intent.putExtra("LATITUDE", 31.2156)
+        intent.putExtra("LONGITUDE", 29.9553)
+        intent.putExtra("API_KEY", "7af08d0e1d543aea9b340405ceed1c3d")
+        intent.putExtra("UNITS", "metric")
+        intent.putExtra("LANGUAGE", "en")
+
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.setExact(
+        // Set the alarm
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
             pendingIntent
         )
-        Toast.makeText(requireContext(), "Alarm Set!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Alarm Set Successfully!", Toast.LENGTH_SHORT).show()
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showNotification(calendar: Calendar) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestNotificationPermission()
-        }
-
         val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val intent = Intent(requireContext(), MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val notification = Notification.Builder(requireContext(), "channel_id")
+        val notification = Notification.Builder(requireContext(), notificationChannelId)
             .setContentTitle("Alert")
             .setContentText("Don't forget to check weather today!: ${calendar.time}")
             .setSmallIcon(R.drawable.ic_notifications)
@@ -153,19 +163,34 @@ class WeatherAlertFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun requestExactAlarmPermission() {
+    private fun requestExactAlarmPermission(calendar: Calendar) {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (!alarmManager.canScheduleExactAlarms()) {
             val intent = Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
             startActivity(intent)
+        } else {
+            setAlarm(calendar)
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun requestNotificationPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
+    private fun requestNotificationPermission(calendar: Calendar) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        } else {
+            showNotification(calendar)
         }
     }
 
-
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(requireContext(), "Notification Permission Granted!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Notification Permission Denied!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }

@@ -26,9 +26,13 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import android.location.Location
+import android.media.MediaPlayer
+import android.media.RingtoneManager
 import android.os.Build
 import android.widget.Toast
-
+import com.example.cloudvibe.alert.AlarmDialog
+import dagger.hilt.android.AndroidEntryPoint
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
@@ -54,6 +58,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             navigationView.setCheckedItem(R.id.nav_home)
         }
 
+        // تحقق مما إذا كان يجب عرض الـ Dialog
+        if (intent.getBooleanExtra("SHOW_DIALOG", false)) {
+            val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            val mediaPlayer = MediaPlayer.create(this, alarmUri)
+            showAlarmDialog(mediaPlayer)
+        }
     }
 
     override fun onNavigationItemSelected(item: android.view.MenuItem): Boolean {
@@ -85,4 +95,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    private fun showAlarmDialog(mediaPlayer: MediaPlayer) {
+        val dialog = AlarmDialog(this)
+        dialog.setMediaPlayer(mediaPlayer)
+        dialog.show()
+    }
 }

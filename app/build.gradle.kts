@@ -10,7 +10,12 @@ plugins {
 android {
     namespace = "com.example.cloudvibe"
     compileSdk = 34
-
+    kapt {
+        arguments {
+            arg("dagger.fastInit", "true")
+            arg("dagger.gradle.incremental", "true")
+        }
+    }
     defaultConfig {
         applicationId = "com.example.cloudvibe"
         minSdk = 24
@@ -163,13 +168,12 @@ dependencies {
     // JSON to Kotlin
     implementation (libs.library)
 
-    // Dagger Hilt
-    implementation (libs.hilt.android)
-    kapt (libs.hilt.android.compiler)
    // Gson
     implementation (libs.gson.v2110)
     // Lottie
     implementation (libs.lottie)
     implementation (libs.androidx.appcompat)
     implementation (libs.androidx.legacy.support.v4) // Ensure both are compatible
+    implementation ("com.google.dagger:hilt-android:2.52")
+    kapt ("com.google.dagger:hilt-compiler:2.52")
 }

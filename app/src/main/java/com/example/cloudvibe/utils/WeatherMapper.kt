@@ -10,7 +10,7 @@ object WeatherMapper {
     fun mapWeatherResponseToEntity(response: WeatherResponse): WeatherEntity {
         return WeatherEntity(
             locationName = response.name,
-            country = response.sys.country,
+            country = response.sys.country?: throw IllegalArgumentException("Country cannot be null"),
             localtime = response.dt.toString(),
             temperature = response.main.temp,
             description = response.weather.firstOrNull()?.description ?: "",
