@@ -30,6 +30,9 @@
     <string name="Enable">Enable</string>
     <string name="Disable">Disable</string>
 
-
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="humiditya">Humidity</string>
+    <string name="pressures">Pressure</string>
 
 </resources>

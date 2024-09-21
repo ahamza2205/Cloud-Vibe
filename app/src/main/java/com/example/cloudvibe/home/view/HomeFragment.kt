@@ -22,6 +22,7 @@ import com.example.cloudvibe.model.repository.WeatherRepository
 import com.example.cloudvibe.utils.RetrofitInstance
 import com.google.android.gms.location.*
 import com.example.cloudvibe.databinding.FragmentHomeBinding
+import com.example.cloudvibe.model.database.ForecastData
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.database.toHourly
 import com.example.cloudvibe.model.network.data.Hourly
@@ -36,6 +37,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
+    private lateinit var dailyForecastAdapter: DailyAdapter
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -57,6 +59,13 @@ class HomeFragment : Fragment() {
         hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), "°C", "km/h")
         hourlyForecastRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         hourlyForecastRecyclerView.adapter = hourlyForecastAdapter
+
+
+        // Setup daily forecast RecyclerView (7-day forecast)
+        val dailyForecastRecyclerView = binding.dayRecycler
+        dailyForecastAdapter = DailyAdapter(mutableListOf(), "°C", requireContext())
+        dailyForecastRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        dailyForecastRecyclerView.adapter = dailyForecastAdapter
 
         // Setup ViewModel and Repository
         val weatherApiService = RetrofitInstance.api
@@ -134,6 +143,15 @@ class HomeFragment : Fragment() {
                 hourlyForecastAdapter.updateList(hourlyData, "°C", "km/h")
             }
         }
+
+        // Observe daily forecast data (7-day forecast)
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.savedForecast.collect { forecastItems ->
+                val dailyData: List<ForecastData> = forecastItems.take(5) // Limiting to next 5 days
+                dailyForecastAdapter.updateList(dailyData, "°C")
+            }
+        }
+
     }
 
     @SuppressLint("SetTextI18n", "DefaultLocale")
@@ -147,9 +165,10 @@ class HomeFragment : Fragment() {
             tvTemperature.text = String.format("%.1f ", weatherEntity.temperature)
 
             tvCondition.text = weatherEntity.description
-            tvWindSpeed.text = "Wind: ${weatherEntity.windSpeed} km/h"
-            tvHumidity.text = "Humidity: ${weatherEntity.humidity} %"
-            tvPressure.text = "Pressure: ${weatherEntity.pressure} mBar"
+
+            textViewWindspeed.text = " ${weatherEntity.windSpeed}km/h"
+            textViewHumidity.text = " ${weatherEntity.humidity}%"
+            textViewPressure.text = " ${weatherEntity.pressure}mBar "
         }
     }
 

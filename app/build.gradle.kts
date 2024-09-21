@@ -166,7 +166,10 @@ dependencies {
     // Dagger Hilt
     implementation (libs.hilt.android)
     kapt (libs.hilt.android.compiler)
-
+   // Gson
     implementation (libs.gson.v2110)
-
+    // Lottie
+    implementation (libs.lottie)
+    implementation (libs.androidx.appcompat)
+    implementation (libs.androidx.legacy.support.v4) // Ensure both are compatible
 }

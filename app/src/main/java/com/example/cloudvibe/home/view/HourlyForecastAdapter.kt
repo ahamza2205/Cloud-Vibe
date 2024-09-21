@@ -39,6 +39,8 @@ class HourlyForecastAdapter(
     }
 
     fun updateList(newList: List<Hourly>, newSymbol: String, newSpeedSymbol: String) {
+
+
         // Get the current day of the year
         val currentDay = getCurrentDay()
 
@@ -47,13 +49,7 @@ class HourlyForecastAdapter(
             val hourDay = getDayFromTimestamp(it.dt)
             hourDay == currentDay
         }
-
-        // Update units and notify the adapter
-        symbol = newSymbol
-        speedUnit = newSpeedSymbol
-        notifyDataSetChanged()
     }
-
 
     private fun getCurrentDay(): Int {
         val calendar = Calendar.getInstance()
@@ -69,13 +65,11 @@ class HourlyForecastAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentHour: Hourly = dataList[position]
-        val tempKelvin = currentHour.temp ?: 0.0
         val icon = currentHour.weather[0].icon
         val link = "https://openweathermap.org/img/wn/$icon@2x.png"
         val localHour = getLocalHourFromUnixTimestamp(currentHour.dt)
 
-        val tempCelsius = UnitConverter.kelvinToCelsius(tempKelvin)
-        val formattedTemp = String.format(Locale.getDefault(), "%.2f°C", tempCelsius)
+        val formattedTemp = String.format(Locale.getDefault(), "%.2f°C", currentHour.temp)
 
         val formattedTime = formatHour(localHour)
         Log.i("Hour", "onBindViewHolder: $localHour")
@@ -88,10 +82,11 @@ class HourlyForecastAdapter(
             .into(holder.iconView)
     }
 
+
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val degreeTV: TextView = itemView.findViewById(R.id.tvTemp)
-        val timeTV: TextView = itemView.findViewById(R.id.tvTime)
-        val iconView: ImageView = itemView.findViewById(R.id.ivWeatherIcon)
+        val degreeTV: TextView = itemView.findViewById(R.id.hour_degree)
+        val timeTV: TextView = itemView.findViewById(R.id.hour_time)
+        val iconView: ImageView = itemView.findViewById(R.id.hour_imageView)
     }
 
     private fun getLocalHourFromUnixTimestamp(gmtUnixTimestamp: Long): Int {

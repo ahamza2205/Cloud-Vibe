@@ -29,5 +29,6 @@
     <string name="Notifications">التنبيهات</string>
     <string name="Enable">تمكين</string>
     <string name="Disable">تعطيل</string>
-
+    <string name="today">اليوم</string>
+    <string name="tomorrow">الغد</string>
 </resources>
