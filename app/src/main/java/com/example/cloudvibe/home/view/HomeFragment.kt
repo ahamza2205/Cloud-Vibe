@@ -155,8 +155,6 @@ class HomeFragment : Fragment() {
                 if (weatherList.isNotEmpty()) {
                     val weather = weatherList.last()
                     displayWeatherData(weather)
-                } else {
-                    Toast.makeText(requireContext(), "No weather data available", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -201,7 +199,7 @@ class HomeFragment : Fragment() {
             tvLocalTime.text = convertUnixTimeToTime(weatherEntity.timestamp)
 
             // Pass the temperature value to String.format
-            tvTemperature.text = String.format("%.1f ", weatherEntity.temperature)
+            tvTemperature.text = String.format("%.1f ", weatherEntity.temperature ) + "°C"
 
             tvCondition.text = weatherEntity.description
 

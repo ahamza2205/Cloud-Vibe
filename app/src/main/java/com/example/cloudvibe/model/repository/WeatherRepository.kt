@@ -41,7 +41,7 @@ class WeatherRepository(
         }
     }
 
-    fun getSavedWeather(): Flow<List<WeatherEntity>> {
+    private fun getSavedWeather(): Flow<List<WeatherEntity>> {
         Log.d(TAG, "Fetching saved weather from local database")
         return weatherDao.getAllWeather()
     }
@@ -71,7 +71,7 @@ class WeatherRepository(
         }
     }
 
-    fun getSavedForecast(): Flow<List<ForecastData>> {
+    private fun getSavedForecast(): Flow<List<ForecastData>> {
         Log.d(TAG, "Fetching saved forecast from local database")
         return weatherDao.getAllForecasts()
     }
