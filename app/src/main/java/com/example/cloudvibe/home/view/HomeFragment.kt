@@ -4,11 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -22,10 +24,12 @@ import com.example.cloudvibe.model.repository.WeatherRepository
 import com.example.cloudvibe.utils.RetrofitInstance
 import com.google.android.gms.location.*
 import com.example.cloudvibe.databinding.FragmentHomeBinding
-import com.example.cloudvibe.model.database.ForecastData
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.database.toHourly
 import com.example.cloudvibe.model.network.data.Hourly
+import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,6 +45,8 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private lateinit var sharedpreferences : SharedPreferencesHelper
+
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     override fun onCreateView(
@@ -51,6 +57,7 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -76,9 +83,24 @@ class HomeFragment : Fragment() {
 
         // Setup location services
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        checkLocationPermission()
+
+        // Setup SharedPreferences
+        sharedpreferences = SharedPreferencesHelper(requireContext())
+
+         // Get saved location from shared preferences
+        val savedLocation = sharedpreferences.getLocation()
+
+        if (savedLocation != null) {
+            // Fetch weather and forecast
+            val (latitude, longitude) = savedLocation
+            homeViewModel.fetchAndDisplayWeather(latitude, longitude, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
+            homeViewModel.fetchAndDisplayForecast(latitude, longitude, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
+        } else {
+            checkLocationPermission()
+        }
         setupObservers()
     }
+
 
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -111,10 +133,12 @@ class HomeFragment : Fragment() {
                 for (location: Location in locationResult.locations) {
                     val lat = location.latitude
                     val lon = location.longitude
-                    val units = "metric"
-                    val language = "en"
-                    homeViewModel.fetchAndDisplayWeather(lat, lon, units, language ,  "7af08d0e1d543aea9b340405ceed1c3d")
-                    homeViewModel.fetchAndDisplayForecast(lat, lon, units, language ,  "7af08d0e1d543aea9b340405ceed1c3d")
+
+                    // Save location to shared preferences for future use in the app
+                    sharedpreferences.saveLocation(lat, lon)
+                    // Fetch weather and forecast data with the new location
+                    homeViewModel.fetchAndDisplayWeather(lat, lon, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
+                    homeViewModel.fetchAndDisplayForecast(lat, lon, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
                 }
             }
         }
@@ -123,6 +147,7 @@ class HomeFragment : Fragment() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupObservers() {
         // Observe saved data from Room (Weather data)
         viewLifecycleOwner.lifecycleScope.launch {
@@ -144,10 +169,24 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Observe daily forecast data (7-day forecast)
+        // Observe daily forecast data (5-day forecast)
         viewLifecycleOwner.lifecycleScope.launch {
             homeViewModel.savedForecast.collect { forecastItems ->
-                val dailyData: List<ForecastData> = forecastItems.take(5) // Limiting to next 5 days
+                val today = LocalDate.now() // Get the current date
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd") // Define date format
+
+                // Filter out today's forecasts and group by date to take only the first forecast of each day
+                val dailyData = forecastItems
+                    .filter { forecast ->
+                        // Parse the date and compare it to today's date
+                        val forecastDate = LocalDate.parse(forecast.date.split(" ")[0], formatter)
+                        forecastDate.isAfter(today) // Only keep dates after today
+                    }
+                    .groupBy { it.date.split(" ")[0] } // Group by date (without time)
+                    .map { (_, forecasts) -> forecasts.first() } // Take the first forecast for each day
+                    .take(5) // Limiting to next 5 days
+
+                // Update the adapter with filtered daily data
                 dailyForecastAdapter.updateList(dailyData, "°C")
             }
         }
@@ -181,6 +220,9 @@ class HomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        if (::locationCallback.isInitialized) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
     }
+
 }
