@@ -1,9 +1,12 @@
 package com.example.cloudvibe.activity
 
-
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,14 +17,12 @@ import com.example.cloudvibe.favorit.view.FavoritFragment
 import com.example.cloudvibe.home.view.HomeFragment
 import com.example.cloudvibe.setting.view.SettingFragment
 import com.google.android.material.navigation.NavigationView
-
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
-    private val REQUEST_CODE_OVERLAY_PERMISSION = 1001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,13 +43,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             replaceFragment(HomeFragment())
             navigationView.setCheckedItem(R.id.nav_home)
         }
-
     }
 
+    fun replaceFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container, fragment)
+        transaction.commit()
+    }
 
-
-
-    override fun onNavigationItemSelected(item: android.view.MenuItem): Boolean {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> replaceFragment(HomeFragment())
             R.id.nav_setting -> replaceFragment(SettingFragment())
@@ -61,10 +64,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    public fun replaceFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment)
-        transaction.commit()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.toolbar_menu, menu)
+
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    val fragment = HomeFragment()
+                    val bundle = Bundle().apply {
+                        putString("city_name", it)
+                    }
+                    fragment.arguments = bundle
+
+                    replaceFragment(fragment)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+        return true
     }
 
     override fun onBackPressed() {
@@ -74,5 +99,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
-
 }
+

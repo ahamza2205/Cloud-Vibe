@@ -6,9 +6,13 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -29,6 +33,9 @@ import com.example.cloudvibe.model.database.toHourly
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import org.json.JSONArray
+import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.text.SimpleDateFormat
@@ -36,13 +43,14 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyAdapter
-    private val homeViewModel: HomeViewModel by viewModels() // Initialize ViewModel with Hilt Dependency Injection
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var sharedpreferences: SharedPreferencesHelper
@@ -54,17 +62,21 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerViews()
         setupLocationServices()
         setupSharedPreferences()
         setupObservers()
+        arguments?.getString("city_name")?.let { cityName ->
+            fetchWeatherDataByCityName(cityName) 
+        }
     }
+
 
     private fun setupRecyclerViews() {
         hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), "°C", "km/h")
@@ -97,8 +109,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
+        Log.d("HomeFragment", "Fetching weather data for lat: $latitude, lon: $longitude")
         homeViewModel.fetchAndDisplayWeather(latitude, longitude, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
-        homeViewModel.fetchAndDisplayForecast(latitude, longitude, "metric", "en","7af08d0e1d543aea9b340405ceed1c3d")
+        homeViewModel.fetchAndDisplayForecast(latitude, longitude, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
     }
 
     private fun checkLocationPermission() {
@@ -163,7 +176,6 @@ class HomeFragment : Fragment() {
                 }
         }
 
-
         viewLifecycleOwner.lifecycleScope.launch {
             homeViewModel.savedForecast.collect { forecastItems ->
                 val today = LocalDate.now()
@@ -179,6 +191,14 @@ class HomeFragment : Fragment() {
                     .take(6)
 
                 dailyForecastAdapter.updateList(dailyData, "°C")
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.savedWeather.collect { weatherList ->
+                if (weatherList.isNotEmpty()) {
+                    val weather = weatherList.last()
+                    displayWeatherData(weather)
+                }
             }
         }
     }
@@ -212,4 +232,50 @@ class HomeFragment : Fragment() {
             fusedLocationClient.removeLocationUpdates(locationCallback)
         }
     }
+
+    // Search View Functions to fetch weather data by city name
+    private fun fetchWeatherDataByCityName(cityName: String) {
+        Log.d("HomeFragment", "Searching for city: $cityName")
+        getCoordinatesFromCityName(cityName)
+    }
+
+    private fun getCoordinatesFromCityName(cityName: String) {
+        val url = "https://nominatim.openstreetmap.org/search?q=$cityName&format=json&addressdetails=1"
+
+        val request = OkHttpClient().newCall(
+            okhttp3.Request.Builder()
+                .url(url)
+                .build()
+        )
+
+        request.enqueue(object : okhttp3.Callback {
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                val json = response.body?.string()
+                if (json != null) {
+                    val jsonArray = JSONArray(json)
+                    if (jsonArray.length() > 0) {
+                        val jsonObject = jsonArray.getJSONObject(0)
+                        val latitude = jsonObject.getDouble("lat")
+                        val longitude = jsonObject.getDouble("lon")
+                        fetchWeatherData(latitude, longitude)
+                    } else {
+                        activity?.runOnUiThread {
+                            Toast.makeText(requireContext(), "City not found", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                activity?.runOnUiThread {
+                    Toast.makeText(requireContext(), "Error fetching coordinates", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+    }
 }
+
+
+
+

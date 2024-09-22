@@ -82,4 +82,7 @@ class WeatherRepository @Inject constructor(
         Log.d(TAG, "Fetching saved forecast from local database")
         return weatherDao.getAllForecasts()
     }
+
+
+
 }

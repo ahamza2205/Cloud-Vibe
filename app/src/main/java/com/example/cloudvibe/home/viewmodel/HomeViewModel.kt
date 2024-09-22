@@ -1,5 +1,7 @@
 package com.example.cloudvibe.home.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cloudvibe.model.database.ForecastData
@@ -22,6 +24,11 @@ class HomeViewModel @Inject constructor(
     private val _savedForecast = MutableStateFlow<List<ForecastData>>(emptyList())
     val savedForecast: StateFlow<List<ForecastData>> = _savedForecast
 
+
+
+
+
+
     fun fetchAndDisplayWeather(lat: Double, lon: Double, units: String, language: String, apiKey: String) {
         viewModelScope.launch {
             try {
@@ -41,4 +48,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+
+
 }
