@@ -102,6 +102,7 @@
                     android:layout_width="70dp"
                     android:layout_height="75dp"
                     app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
                     app:lottie_rawRes="@raw/animationpressurewhite"
                     app:lottie_speed="0.5" />
 
@@ -131,6 +132,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
                     app:lottie_rawRes="@raw/animationhumidity"
                     app:lottie_speed="0.5" />
                 <TextView
@@ -158,6 +160,7 @@
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
                     app:lottie_rawRes="@raw/animationwind"
                     app:lottie_speed="0.5" />
                 <TextView
