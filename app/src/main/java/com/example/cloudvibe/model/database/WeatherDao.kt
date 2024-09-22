@@ -19,6 +19,9 @@ interface WeatherDao {
     @Query("SELECT * FROM weather ORDER BY timestamp DESC")
     fun getAllWeather(): Flow<List<WeatherEntity>>
 
+    @Query("DELETE FROM weather")
+    suspend fun deleteAllWeather()
+
 
     // forecast data table
     @Insert(onConflict = OnConflictStrategy.REPLACE)

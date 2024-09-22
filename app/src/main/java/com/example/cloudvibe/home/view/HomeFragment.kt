@@ -18,6 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cloudvibe.home.viewmodel.HomeViewModel
 import com.example.cloudvibe.model.database.WeatherEntity
@@ -143,10 +144,12 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.savedWeather.collect { weatherList ->
-                if (weatherList.isNotEmpty()) {
-                    val weather = weatherList.last()
-                    displayWeatherData(weather)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.savedWeather.collect { weatherList ->
+                    if (weatherList.isNotEmpty()) {
+                        val weather = weatherList.last()
+                        displayWeatherData(weather)
+                    }
                 }
             }
         }
@@ -169,11 +172,11 @@ class HomeFragment : Fragment() {
                 val dailyData = forecastItems
                     .filter { forecast ->
                         val forecastDate = LocalDate.parse(forecast.date.split(" ")[0], formatter)
-                        forecastDate.isAfter(today)
+                        !forecastDate.isBefore(today)
                     }
                     .groupBy { it.date.split(" ")[0] }
                     .map { (_, forecasts) -> forecasts.first() }
-                    .take(5)
+                    .take(6)
 
                 dailyForecastAdapter.updateList(dailyData, "°C")
             }

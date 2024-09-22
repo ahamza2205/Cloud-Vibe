@@ -23,18 +23,27 @@ class WeatherRepository @Inject constructor(
     private val TAG = "WeatherRepository"
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun getWeatherFromApiAndSaveToLocal(lat: Double, lon: Double, units: String ,language: String, apiKey: String) : Flow<List<WeatherEntity>> {
+    suspend fun getWeatherFromApiAndSaveToLocal(
+        lat: Double, lon: Double, units: String, language: String, apiKey: String
+    ): Flow<List<WeatherEntity>> {
         return flow {
             try {
                 Log.d(TAG, "Fetching current weather and saving to local for lat: $lat, lon: $lon")
+
                 val response = weatherApiService.getCurrentWeather(lat, lon, units, language, apiKey)
                 Log.d(TAG, "Received weather response for saving: $response")
+
                 val weatherEntity = mapWeatherResponseToEntity(response)
+
+                weatherDao.deleteAllWeather()
+                Log.d(TAG, "Old weather data deleted from local database")
+
                 weatherDao.insertWeather(weatherEntity)
                 Log.d(TAG, "Weather data saved to local database: $weatherEntity")
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching weather for saving", e)
             }
+
             emitAll(getSavedWeather())
         }.flatMapLatest {
             getSavedWeather()
