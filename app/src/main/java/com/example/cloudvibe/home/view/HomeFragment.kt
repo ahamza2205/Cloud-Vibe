@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -29,6 +30,7 @@ import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.network.data.Hourly
 import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import com.example.cloudvibe.databinding.FragmentHomeBinding
+import com.example.cloudvibe.map.SharedViewModel
 import com.example.cloudvibe.model.database.toHourly
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,6 +53,7 @@ class HomeFragment : Fragment() {
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyAdapter
     private val homeViewModel: HomeViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels() // ViewModel shared with MapFragment
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var sharedpreferences: SharedPreferencesHelper
@@ -72,8 +75,18 @@ class HomeFragment : Fragment() {
         setupLocationServices()
         setupSharedPreferences()
         setupObservers()
+
+        //// ---- MAP --- /////
+        // Listen for selected location from MapFragment
+        // Observe the selected location from SharedViewModel
+        sharedViewModel.selectedLocation.observe(viewLifecycleOwner) { location ->
+            val (latitude, longitude) = location
+            // Use latitude and longitude to fetch weather data
+            fetchWeatherData(latitude, longitude)
+        }
         arguments?.getString("city_name")?.let { cityName ->
-            fetchWeatherDataByCityName(cityName) 
+            fetchWeatherDataByCityName(cityName)
+
         }
     }
 

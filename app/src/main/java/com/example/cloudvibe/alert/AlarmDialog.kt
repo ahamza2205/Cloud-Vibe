@@ -39,7 +39,4 @@ class AlarmDialog : DialogFragment() {
         return view
     }
 
-    fun setMediaPlayer(mp: MediaPlayer) {
-        mediaPlayer = mp
-    }
 }

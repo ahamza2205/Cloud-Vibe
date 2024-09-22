@@ -12,7 +12,6 @@ import android.view.View
 import android.view.WindowManager
 import com.example.cloudvibe.R
 
-
 class OverlayService : Service() {
 
     private lateinit var windowManager: WindowManager
@@ -20,39 +19,52 @@ class OverlayService : Service() {
     private lateinit var mediaPlayer: MediaPlayer
 
     override fun onBind(intent: Intent?): IBinder? {
-        return null // Not binding to any activity
+        return null
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        // Create overlay view
+        // create the view and set the layout parameters
         overlayView = LayoutInflater.from(this).inflate(R.layout.alarm_dialog, null)
 
-        // Initialize MediaPlayer
-        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        mediaPlayer = MediaPlayer.create(this, alarmUri)
-        mediaPlayer.start()
-
-        // Set layout parameters for the overlay view
+        // set the layout parameters of the view
         val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
             PixelFormat.TRANSLUCENT
         )
 
-        // Add the view to the window
+
+        // insert the view into the window and then display it
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.addView(overlayView, params)
+
+        // open the media player and start looping
+        val notificationUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        mediaPlayer = MediaPlayer.create(this, notificationUri)
+        mediaPlayer.isLooping = true
+        mediaPlayer.start()
+
+        overlayView.setOnClickListener {
+            stopSelf()  // stop the service when the user clicks on the overlay
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // Remove the view from the window when the service is destroyed
-        if (::overlayView.isInitialized) windowManager.removeView(overlayView)
-        mediaPlayer.release() // Release the media player
+
+      // close the window
+        if (::overlayView.isInitialized) {
+            windowManager.removeView(overlayView)
+        }
+
+        // stop the media player
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
     }
 }
-

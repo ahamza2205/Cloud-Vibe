@@ -183,4 +183,6 @@ dependencies {
     // work manager
     implementation (libs.work.runtime.ktx.v271)
 
+    implementation (libs.osmdroid.android.v6110)
+
 }

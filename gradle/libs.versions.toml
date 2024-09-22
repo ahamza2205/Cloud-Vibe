@@ -35,6 +35,7 @@ constraintlayout = "2.1.4"
 materialVersion = "1.9.0"
 navigationUiKtx = "2.8.0"
 osmdroidAndroid = "6.1.12"
+osmdroidAndroidVersion = "6.1.10"
 playServicesLocation = "21.3.0"
 playServicesMaps = "19.0.0"
 recyclerview = "1.3.2"
@@ -92,6 +93,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
+osmdroid-android-v6110 = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroidVersion" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
