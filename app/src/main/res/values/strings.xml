@@ -29,7 +29,6 @@
     <string name="Notifications">Notifications</string>
     <string name="Enable">Enable</string>
     <string name="Disable">Disable</string>
-
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="humiditya">Humidity</string>
@@ -39,5 +38,7 @@
     <string name="GoToWeathr">Go To Weathr</string>
     <string name="Stop">Stop</string>
     <string name="WeatherAlarms">Weather Alarms</string>
+    <string name="Sunrise">Sunrise</string>
+    <string name="Sunset">Sunset</string>
 
 </resources>

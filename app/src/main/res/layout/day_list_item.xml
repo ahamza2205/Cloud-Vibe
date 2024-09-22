@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_blue_horizon_trans">
+    android:layout_margin="3dp"
+    android:background="@drawable/rounded_recycler_view">
 
     <TextView
         android:id="@+id/max_degree"

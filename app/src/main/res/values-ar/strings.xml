@@ -38,4 +38,6 @@
     <string name="GoToWeathr">الذهاب إلى الطقس</string>
     <string name="Stop">إيقاف</string>
     <string name="WeatherAlarms">تنبيهات الطقس</string>
+    <string name="Sunrise">الشروق</string>
+    <string name="Sunset">الغروب</string>
 </resources>

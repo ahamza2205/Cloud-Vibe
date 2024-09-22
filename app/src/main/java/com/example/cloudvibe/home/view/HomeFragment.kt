@@ -191,6 +191,8 @@ class HomeFragment : Fragment() {
             textViewWindspeed.text = " ${weatherEntity.windSpeed}km/h"
             textViewHumidity.text = " ${weatherEntity.humidity}%"
             textViewPressure.text = " ${weatherEntity.pressure}mBar "
+            textViewSunrise.text = convertUnixTimeToTime(weatherEntity.sunrise)
+            textViewSunset.text = convertUnixTimeToTime(weatherEntity.sunset)
         }
     }
 
