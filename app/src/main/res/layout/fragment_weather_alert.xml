@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:fontFamily="@font/afacad_bold"
+        android:fontFamily="@font/akatab_extrabold"
         android:text="@string/WeatherAlarms"
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"

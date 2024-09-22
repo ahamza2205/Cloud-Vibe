@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:fontFamily="@font/afacad_medium"
+            android:fontFamily="@font/akatab_semibold"
             android:text="Local Time: Unknown"
             android:textColor="@color/white"
             android:textSize="18dp" />
@@ -29,11 +29,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/alegreya_sans_sc_medium"
+            android:layout_marginTop="0dp"
+            android:fontFamily="@font/akatab_medium"
             android:text="Country: Unknown"
             android:textColor="@color/white_transparent"
-            android:textSize="24dp" />
+            android:textSize="28dp" />
 
         <!-- Location TextView -->
         <TextView
@@ -42,10 +42,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="0dp"
-            android:fontFamily="@font/afacad_bold"
+            android:fontFamily="@font/akatab_bold"
             android:text="Location"
             android:textColor="@color/white"
-            android:textSize="32dp"
+            android:textSize="34dp"
             android:textStyle="bold" />
 
         <!-- Temperature TextView -->
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/afacad_bold"
+            android:fontFamily="@font/akatab_extrabold"
             android:text="0"
             android:textColor="@color/white"
             android:textSize="100dp"
@@ -66,10 +66,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/afacad_semibold"
+            android:fontFamily="@font/akatab_bold"
             android:text="@string/condition"
             android:textColor="@color/white_transparent"
-            android:textSize="24dp" />
+            android:textSize="28dp" />
         <!-- Forecast RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewForecast"
