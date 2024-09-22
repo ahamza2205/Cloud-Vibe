@@ -31,4 +31,11 @@
     <string name="Disable">تعطيل</string>
     <string name="today">اليوم</string>
     <string name="tomorrow">الغد</string>
+    <string name="humiditya">الرطوبة</string>
+    <string name="pressures">الضغط</string>
+    <string name="alarm">التنبيه</string>
+    <string name="Itstimetochecktheweather">يوميا يجب عليك التحقق من الطقس</string>
+    <string name="GoToWeathr">الذهاب إلى الطقس</string>
+    <string name="Stop">إيقاف</string>
+    <string name="WeatherAlarms">تنبيهات الطقس</string>
 </resources>

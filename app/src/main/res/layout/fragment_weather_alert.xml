@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".alert.view.WeatherAlertFragment">
+    tools:context=".alert.WeatherAlertFragment">
 
     <!-- Your other UI components -->
     <!-- Floating Action Button to add alarm -->
@@ -13,10 +13,11 @@
         android:id="@+id/tvWeather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="7dp"
-        android:text="Weather Information"
-        android:textSize="18sp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/afacad_bold"
+        android:text="@string/WeatherAlarms"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

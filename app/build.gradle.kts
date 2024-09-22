@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core)
+    implementation(libs.androidx.hilt.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -174,6 +175,12 @@ dependencies {
     implementation (libs.lottie)
     implementation (libs.androidx.appcompat)
     implementation (libs.androidx.legacy.support.v4) // Ensure both are compatible
+
+    // Hilt for dependency injection
     implementation ("com.google.dagger:hilt-android:2.52")
     kapt ("com.google.dagger:hilt-compiler:2.52")
+
+    // work manager
+    implementation (libs.work.runtime.ktx.v271)
+
 }

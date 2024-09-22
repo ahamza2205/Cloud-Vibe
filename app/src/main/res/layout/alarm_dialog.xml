@@ -4,31 +4,30 @@
     android:layout_height="200dp"
     android:orientation="vertical"
     android:padding="24dp"
-    android:backgroundTint="@color/blue"
-    android:background="@drawable/dialog_background">
+    android:background="@color/blue">
 
     <!-- Alarm Title -->
     <TextView
         android:id="@+id/alarm_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Alarm"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
         android:layout_gravity="center_horizontal"
-        android:paddingBottom="16dp" />
+        android:paddingBottom="16dp"
+        android:text="@string/alarm"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:textStyle="bold" />
 
     <!-- Alarm Message -->
     <TextView
         android:id="@+id/alarm_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="It's time to check the weather!"
-        android:textSize="16sp"
-        android:textColor="@color/white"
         android:layout_gravity="center_horizontal"
-        android:paddingBottom="24dp" />
+        android:paddingBottom="24dp"
+        android:text="@string/Itstimetochecktheweather"
+        android:textColor="@color/white"
+        android:textSize="18dp" />
 
     <!-- Buttons for Stop and Snooze -->
     <LinearLayout
@@ -40,20 +39,20 @@
 
         <Button
             android:id="@+id/stop_button"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Stop"
-            android:textColor="@android:color/white"
+            android:layout_marginEnd="8dp"
             android:backgroundTint="#FFC107"
-            android:layout_marginEnd="8dp" />
+            android:text="@string/Stop"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/snooze_button"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Snooze"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#FF5722" />
+            android:backgroundTint="#FF5722"
+            android:text="@string/GoToWeathr"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
 </LinearLayout>

@@ -1,22 +1,28 @@
 package com.example.cloudvibe.alert
 
-import android.app.Dialog
-import android.content.Context
 import android.media.MediaPlayer
-import android.view.Window
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.DialogFragment
 import com.example.cloudvibe.R
+import dagger.hilt.android.AndroidEntryPoint
 
-class AlarmDialog(context: Context) : Dialog(context) {
+@AndroidEntryPoint
+class AlarmDialog : DialogFragment() {
 
     private var mediaPlayer: MediaPlayer? = null
 
-    init {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.alarm_dialog)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.alarm_dialog, container, false)
 
-        val stopButton: Button = findViewById(R.id.stop_button)
-        val snoozeButton: Button = findViewById(R.id.snooze_button)
+        val stopButton: Button = view.findViewById(R.id.stop_button)
+        val snoozeButton: Button = view.findViewById(R.id.snooze_button)
 
         stopButton.setOnClickListener {
             mediaPlayer?.stop()
@@ -29,6 +35,8 @@ class AlarmDialog(context: Context) : Dialog(context) {
             mediaPlayer?.release()
             dismiss()
         }
+
+        return view
     }
 
     fun setMediaPlayer(mp: MediaPlayer) {

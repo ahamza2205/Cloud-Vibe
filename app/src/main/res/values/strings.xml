@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Cloud Vibes</string>
     <string name="open">Open Cloud Vibe</string>
     <string name="close">Close Cloud Vibe</string>
@@ -34,5 +34,10 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="humiditya">Humidity</string>
     <string name="pressures">Pressure</string>
+    <string name="alarm">Alarm</string>
+    <string name="Itstimetochecktheweather">The time to check the weather</string>
+    <string name="GoToWeathr">Go To Weathr</string>
+    <string name="Stop">Stop</string>
+    <string name="WeatherAlarms">Weather Alarms</string>
 
 </resources>
