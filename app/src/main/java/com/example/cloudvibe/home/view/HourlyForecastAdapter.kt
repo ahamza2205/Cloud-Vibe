@@ -39,9 +39,6 @@ class HourlyForecastAdapter(
     }
 
     fun updateList(newList: List<Hourly>, newSymbol: String, newSpeedSymbol: String) {
-
-
-        // Get the current day of the year
         val currentDay = getCurrentDay()
 
         // Filter the data to include only hours of the current day
@@ -49,6 +46,13 @@ class HourlyForecastAdapter(
             val hourDay = getDayFromTimestamp(it.dt)
             hourDay == currentDay
         }
+
+        // Update the symbol and speed unit
+        this.symbol = newSymbol
+        this.speedUnit = newSpeedSymbol
+
+        // Notify RecyclerView to update its items
+        notifyDataSetChanged()
     }
 
     private fun getCurrentDay(): Int {

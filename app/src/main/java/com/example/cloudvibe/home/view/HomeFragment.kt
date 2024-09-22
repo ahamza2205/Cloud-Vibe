@@ -15,6 +15,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cloudvibe.home.viewmodel.HomeViewModel
@@ -150,11 +152,14 @@ class HomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.savedForecast.collect { forecastItems ->
-                val hourlyData: List<Hourly> = forecastItems.map { it.toHourly() }
-                hourlyForecastAdapter.updateList(hourlyData, "°C", "km/h")
-            }
+            homeViewModel.savedForecast
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { forecastItems ->
+                    val hourlyData: List<Hourly> = forecastItems.map { it.toHourly() }
+                    hourlyForecastAdapter.updateList(hourlyData, "°C", "km/h")
+                }
         }
+
 
         viewLifecycleOwner.lifecycleScope.launch {
             homeViewModel.savedForecast.collect { forecastItems ->
