@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/mid_blue_sky">
+    android:background="@color/light_blue_horizon_trans">
 
     <TextView
         android:id="@+id/max_degree"

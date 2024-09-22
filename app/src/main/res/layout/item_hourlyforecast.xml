@@ -6,7 +6,7 @@
     android:id="@+id/hour_card"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/light_clouds"
+    android:backgroundTint="@color/white_transparent"
     app:cardCornerRadius="50dp"
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
@@ -22,13 +22,15 @@
             android:id="@+id/hour_degree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/afacad_bold"
             android:singleLine="true"
             android:text="TextView"
+            android:textColor="@color/white"
             android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/hour_imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/hour_imageView" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/hour_imageView"
@@ -46,8 +48,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="9dp"
+            android:fontFamily="@font/afacad_bold"
             android:singleLine="true"
             android:text="TextView"
+            android:textColor="@color/white"
             android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

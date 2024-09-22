@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/afacad_medium"
             android:text="Local Time: Unknown"
             android:textColor="@color/white"
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="0dp"
             android:fontFamily="@font/afacad_bold"
             android:text="Location"
             android:textColor="@color/white"
@@ -190,7 +190,7 @@
             android:id="@+id/day_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corners_days"
+            android:background="@color/light_blue_horizon_trans"
             android:layout_marginTop="8dp" />
     </LinearLayout>
 
