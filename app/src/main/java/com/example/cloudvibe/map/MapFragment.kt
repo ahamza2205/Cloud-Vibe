@@ -1,161 +1,185 @@
 package com.example.cloudvibe.map
 
-import android.app.AlertDialog
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.cloudvibe.R
-import com.example.cloudvibe.home.view.HomeFragment
+import com.example.cloudvibe.activity.MainActivity
+import com.example.cloudvibe.favorit.view.FavoritFragment
+import com.example.cloudvibe.model.database.FavoriteCity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.MapEventsOverlay
-import org.osmdroid.events.MapEventsReceiver
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import java.io.IOException
 
-class MapFragment : Fragment() {
+@AndroidEntryPoint
+class MapFragment : Fragment(), LocationListener {
 
     private lateinit var mapView: MapView
+    private lateinit var searchEditText: EditText
     private var selectedLocationMarker: Marker? = null
-    private var selectedGeoPoint: GeoPoint? = null
+    private var currentLocationMarker: Marker? = null
 
-    // Using SharedViewModel
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val mapViewModel: MapViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Initialize the library
         Configuration.getInstance().load(requireActivity(), PreferenceManager.getDefaultSharedPreferences(requireActivity()))
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? MainActivity)?.supportActionBar?.hide()
 
         mapView = view.findViewById(R.id.map)
+        searchEditText = view.findViewById(R.id.mainEditText)
 
-        // Initialize the map
         mapView.setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
         mapView.setBuiltInZoomControls(true)
         mapView.setMultiTouchControls(true)
 
-        // Handle map clicks to add a new marker
-        mapView.overlays.add(MapEventsOverlay(object : MapEventsReceiver {
-            override fun longPressHelper(p: GeoPoint?): Boolean {
-                return false
-            }
+        val startPoint = GeoPoint(31.2001, 29.9187)
+        mapView.controller.setZoom(15.0)
+        mapView.controller.setCenter(startPoint)
 
-            override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-                p?.let {
-                    selectedGeoPoint = it
-                    getCityNameAndShowDialog(it)
+        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val cityName = searchEditText.text.toString().trim()
+                if (cityName.isNotEmpty()) {
+                    mapViewModel.searchForCity(cityName)
+                } else {
+                    Toast.makeText(requireContext(), "Please enter a city name", Toast.LENGTH_SHORT).show()
                 }
-                return true
+                true
+            } else {
+                false
             }
-        }))
+        }
+
+        mapViewModel.cityCoordinates.observe(viewLifecycleOwner) { geoPoint ->
+            mapView.controller.setCenter(geoPoint)
+            addSelectedMarker(geoPoint)
+            showConfirmationDialog(searchEditText.text.toString(), geoPoint)
+        }
+
+        mapViewModel.error.observe(viewLifecycleOwner) { errorMessage ->
+            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+        }
+
+        getCurrentLocation()
     }
 
     private fun addSelectedMarker(point: GeoPoint) {
-        // Remove the previous selected location marker if it exists
         selectedLocationMarker?.let {
             mapView.overlays.remove(it)
         }
 
-        // Add a new marker for the selected location
         selectedLocationMarker = Marker(mapView).apply {
             position = point
-            icon = resources.getDrawable(R.drawable.ic_selected_marker) // Your marker icon
+            icon = resources.getDrawable(R.drawable.ic_selected_marker) // Your selected location marker icon
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         }
 
         mapView.overlays.add(selectedLocationMarker)
         mapView.invalidate()
     }
 
-    private fun getCityNameAndShowDialog(point: GeoPoint) {
-        val url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=${point.latitude}&lon=${point.longitude}&zoom=10&addressdetails=1"
-
-        val request = OkHttpClient().newCall(
-            Request.Builder()
-                .url(url)
-                .build()
-        )
-
-        request.enqueue(object : okhttp3.Callback {
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                val json = response.body?.string()
-                if (json != null) {
-                    val jsonObject = JSONArray("[$json]").getJSONObject(0)
-                    val cityName = jsonObject.getJSONObject("address").optString("city", "Unknown location")
-
-                    activity?.runOnUiThread {
-                        showConfirmationDialog(cityName, point)
-                    }
-                }
-            }
-
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                activity?.runOnUiThread {
-                    Toast.makeText(requireContext(), "Failed to get city name", Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
-    }
-
-    private fun showConfirmationDialog(cityName: String, point: GeoPoint) {
-        // Show a dialog to confirm the selected location
+    private fun showConfirmationDialog(cityName: String, geoPoint: GeoPoint) {
         AlertDialog.Builder(requireContext())
-            .setTitle("Location Selected")
-            .setMessage("Do you want to see the weather for $cityName?")
+            .setTitle("Add to Favorites")
+            .setMessage("Do you want to add $cityName to your favorites?")
             .setPositiveButton("OK") { _, _ ->
-                // Add marker for selected location
-                addSelectedMarker(point)
-                // Set selected coordinates in SharedViewModel
-                sharedViewModel.setSelectedLocation(point.latitude, point.longitude)
-                // Navigate to HomeFragment
-                navigateToHomeFragment()
+                saveCityToFavorites(cityName, geoPoint.latitude, geoPoint.longitude)
+
+                val favoritFragment = FavoritFragment()
+                val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.fragment_container, favoritFragment)
+                fragmentTransaction.commit() 
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss() // Do nothing, allow user to select another location
-            }
-            .create()
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun navigateToHomeFragment() {
-        // This method handles the navigation to HomeFragment
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, HomeFragment())
-            .addToBackStack(null)
-            .commit()
+
+
+    private fun saveCityToFavorites(cityName: String, lat: Double, lon: Double) {
+        val favoriteCity = FavoriteCity(cityName = cityName, latitude = lat, longitude = lon)
+
+        lifecycleScope.launch {
+            mapViewModel.insertFavoriteCity(favoriteCity)
+            Toast.makeText(requireContext(), "$cityName added to favorites", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getCurrentLocation() {
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+            return
+        }
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
+    }
+
+    override fun onLocationChanged(location: Location) {
+        val currentPoint = GeoPoint(location.latitude, location.longitude)
+
+        currentLocationMarker = Marker(mapView).apply {
+            position = currentPoint
+            icon = resources.getDrawable(R.drawable.ic_location_marker) // Your current location marker icon
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        }
+
+        mapView.overlays.add(currentLocationMarker)
+        mapView.controller.setCenter(currentPoint)
+        mapView.invalidate()
     }
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume()  // Enable map view
+        mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.onPause()  // Disable map view
+        mapView.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView.onDetach()  // Clean up map view
+        mapView.onDetach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as? MainActivity)?.supportActionBar?.show()
     }
 }

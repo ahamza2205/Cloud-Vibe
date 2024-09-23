@@ -1,6 +1,7 @@
 package com.example.cloudvibe.model.repository
 
 import android.util.Log
+import com.example.cloudvibe.model.database.FavoriteCity
 import com.example.cloudvibe.model.database.ForecastData
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.database.WeatherEntity
@@ -83,6 +84,16 @@ class WeatherRepository @Inject constructor(
         return weatherDao.getAllForecasts()
     }
 
+    // Favorite cities
+    suspend fun insertFavoriteCity(favoriteCity: FavoriteCity) {
+        weatherDao.insert(favoriteCity)
+    }
 
+    fun getAllFavoriteCities(): Flow<List<FavoriteCity>> {
+        return weatherDao.getAllLocal()
+    }
+    suspend fun deleteFavoriteCity(favoriteCity: FavoriteCity) {
+        weatherDao.delete(favoriteCity)
+    }
 
 }

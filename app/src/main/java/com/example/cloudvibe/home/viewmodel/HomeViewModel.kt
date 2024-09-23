@@ -24,11 +24,6 @@ class HomeViewModel @Inject constructor(
     private val _savedForecast = MutableStateFlow<List<ForecastData>>(emptyList())
     val savedForecast: StateFlow<List<ForecastData>> = _savedForecast
 
-
-
-
-
-
     fun fetchAndDisplayWeather(lat: Double, lon: Double, units: String, language: String, apiKey: String) {
         viewModelScope.launch {
             try {

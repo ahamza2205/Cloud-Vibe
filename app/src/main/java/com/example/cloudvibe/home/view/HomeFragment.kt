@@ -8,11 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -30,7 +27,7 @@ import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.network.data.Hourly
 import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import com.example.cloudvibe.databinding.FragmentHomeBinding
-import com.example.cloudvibe.map.SharedViewModel
+import com.example.cloudvibe.activity.SharedViewModel
 import com.example.cloudvibe.model.database.toHourly
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +49,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyAdapter
-    private val homeViewModel: HomeViewModel by viewModels()
+        private val homeViewModel: HomeViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels() // ViewModel shared with MapFragment
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback

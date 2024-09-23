@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [WeatherEntity::class, ForecastData::class], version = 1)
+@Database(entities = [WeatherEntity::class, ForecastData::class, FavoriteCity::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase : RoomDatabase() {
     abstract fun weatherDao(): WeatherDao
@@ -30,4 +30,5 @@ abstract class WeatherDatabase : RoomDatabase() {
         }
     }
 }
+
 
