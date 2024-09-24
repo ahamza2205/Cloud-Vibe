@@ -1,4 +1,4 @@
-package com.example.cloudvibe.map
+package com.example.cloudvibe.favorit.view
 
 import android.Manifest
 import android.content.Context
@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cloudvibe.R
 import com.example.cloudvibe.activity.MainActivity
-import com.example.cloudvibe.favorit.view.FavoritFragment
-import com.example.cloudvibe.map.view.LocationAdapter
+import com.example.cloudvibe.favorit.favdetil.LocationAdapter
+import com.example.cloudvibe.favorit.viewmodel.MapViewModel
 import com.example.cloudvibe.model.database.FavoriteCity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -34,10 +34,6 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONArray
-import java.io.IOException
 
 @AndroidEntryPoint
 class MapFragment : Fragment(), LocationListener {

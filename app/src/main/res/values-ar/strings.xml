@@ -40,4 +40,6 @@
     <string name="WeatherAlarms">تنبيهات الطقس</string>
     <string name="Sunrise">الشروق</string>
     <string name="Sunset">الغروب</string>
+    <string name="search_results">نتائج البحث</string>
+
 </resources>

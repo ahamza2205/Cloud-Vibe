@@ -35,7 +35,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
+        val toggle =
+            ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -45,20 +46,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun replaceFragment(fragment: Fragment) {
+    fun replaceFragment(fragment: Fragment, title: String = "") {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
-    }
 
+        // Set the toolbar title
+        supportActionBar?.title = title
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_home -> replaceFragment(HomeFragment())
-            R.id.nav_setting -> replaceFragment(SettingFragment())
-            R.id.nav_alarts -> replaceFragment(WeatherAlertFragment())
-            R.id.nav_favorites -> replaceFragment(FavoritFragment())
+            R.id.nav_home -> replaceFragment(HomeFragment(), getString(R.string.home))
+            R.id.nav_setting -> replaceFragment(SettingFragment(), getString(R.string.settings))
+            R.id.nav_alarts -> replaceFragment(WeatherAlertFragment(), getString(R.string.alerts))
+            R.id.nav_favorites -> replaceFragment(FavoritFragment(), getString(R.string.favorites))
             R.id.nav_exit -> finish()
         }
         item.isChecked = true
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     fragment.arguments = bundle
 
-                    replaceFragment(fragment)
+                    replaceFragment(fragment, getString(R.string.search_results))
                 }
                 return true
             }
@@ -102,4 +105,3 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 }
-

@@ -14,7 +14,6 @@ import com.example.cloudvibe.activity.SharedViewModel
 import com.example.cloudvibe.databinding.FragmentFavoritBinding
 import com.example.cloudvibe.favorit.favdetil.FavoritWeatherFragment
 import com.example.cloudvibe.favorit.viewmodel.FavoritViewModel
-import com.example.cloudvibe.map.MapFragment
 import dagger.hilt.android.AndroidEntryPoint
 import android.app.AlertDialog
 import com.example.cloudvibe.model.database.FavoriteCity

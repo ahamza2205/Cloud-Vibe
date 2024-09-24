@@ -172,8 +172,8 @@ class FavoritWeatherFragment : Fragment() {
 
     private fun convertTemperature(tempInCelsius: Float, unit: String): Number {
         return when (unit) {
-            "K" -> tempInCelsius + 273.15
-            "F" -> (tempInCelsius * 9 / 5) + 32
+            "°K" -> tempInCelsius + 273.15
+            "°F" -> (tempInCelsius * 9 / 5) + 32
             else -> tempInCelsius
         }
     }

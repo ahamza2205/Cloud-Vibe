@@ -1,4 +1,4 @@
-package com.example.cloudvibe.map
+package com.example.cloudvibe.favorit.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

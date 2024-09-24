@@ -1,4 +1,4 @@
-package com.example.cloudvibe.map.view
+package com.example.cloudvibe.favorit.favdetil
 
 import android.view.LayoutInflater
 import android.view.View
