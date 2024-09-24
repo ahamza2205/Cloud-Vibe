@@ -12,6 +12,9 @@ import android.view.View
 import android.view.WindowManager
 import com.example.cloudvibe.R
 
+
+
+
 class OverlayService : Service() {
 
     private lateinit var windowManager: WindowManager
@@ -25,10 +28,8 @@ class OverlayService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        // create the view and set the layout parameters
         overlayView = LayoutInflater.from(this).inflate(R.layout.alarm_dialog, null)
 
-        // set the layout parameters of the view
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -49,19 +50,17 @@ class OverlayService : Service() {
         mediaPlayer.start()
 
         overlayView.setOnClickListener {
-            stopSelf()  // stop the service when the user clicks on the overlay
+            stopSelf()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-      // close the window
         if (::overlayView.isInitialized) {
             windowManager.removeView(overlayView)
         }
 
-        // stop the media player
         if (::mediaPlayer.isInitialized) {
             mediaPlayer.stop()
             mediaPlayer.release()

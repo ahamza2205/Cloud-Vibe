@@ -19,16 +19,29 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
-import com.example.cloudvibe.activity.MainActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
+
+
+
+import android.app.AlarmManager
+import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TimePickerDialog
+
+import android.util.Log
+
+import java.util.Calendar
 
 class WeatherAlertFragment : Fragment() {
 
     private val notificationChannelId = "channel_id"
-
     companion object {
         private const val REQUEST_CODE_OVERLAY_PERMISSION = 1001
+        private const val REQUEST_CODE_NOTIFICATION_PERMISSION = 1002
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -78,6 +91,8 @@ class WeatherAlertFragment : Fragment() {
                     { _, hourOfDay, minute ->
                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                         calendar.set(Calendar.MINUTE, minute)
+                        calendar.set(Calendar.SECOND, 0)
+                        calendar.set(Calendar.MILLISECOND, 0)
 
                         showTypeDialog(calendar)
                     }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false
@@ -123,63 +138,82 @@ class WeatherAlertFragment : Fragment() {
     }
 
     private fun setAlarm(calendar: Calendar) {
+        // Ensure the selected time is in the future
+        if (calendar.before(Calendar.getInstance())) {
+            Toast.makeText(requireContext(), "Cannot set alarm for past time!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val alarmTimeInMillis = calendar.timeInMillis
+        Log.d("AlarmTime", "Setting alarm for: $alarmTimeInMillis (${calendar.time})")
+
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
 
         // Pass the scheduled time
-        intent.putExtra("SCHEDULED_TIME", calendar.timeInMillis)
-        intent.putExtra("LATITUDE", 31.2156)
-        intent.putExtra("LONGITUDE", 29.9553)
-        intent.putExtra("API_KEY", "7af08d0e1d543aea9b340405ceed1c3d")
-        intent.putExtra("UNITS", "metric")
-        intent.putExtra("LANGUAGE", "en")
+        intent.putExtra("SCHEDULED_TIME", alarmTimeInMillis)
 
         val pendingIntent = PendingIntent.getBroadcast(
-            requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            requireContext(),
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Set the alarm
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            pendingIntent
-        )
+        try {
+            // Set the alarm
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                alarmTimeInMillis,
+                pendingIntent
+            )
 
-        // Check Overlay Permission
-        checkOverlayPermission()
+            // Check Overlay Permission
+            checkOverlayPermission()
 
-        Toast.makeText(requireContext(), "Alarm Set Successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Alarm Set Successfully!", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Failed to set alarm: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("AlarmError", "Error setting alarm", e)
+        }
     }
 
+
     private fun checkOverlayPermission() {
-        if (Settings.canDrawOverlays(requireContext())) {
-            // Start the Overlay Service
-            val intent = Intent(requireContext(), OverlayService::class.java)
-            requireActivity().startService(intent)
-        } else {
+        if (!Settings.canDrawOverlays(requireContext())) {
             // Request the Overlay permission
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${requireContext().packageName}"))
             startActivityForResult(intent, REQUEST_CODE_OVERLAY_PERMISSION)
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun showNotification(calendar: Calendar) {
-        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
 
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        // Pass notification type and scheduled time to the receiver
+        intent.putExtra("ALERT_TYPE", "NOTIFICATION")
+        intent.putExtra("SCHEDULED_TIME", calendar.timeInMillis)
 
-        val notification = Notification.Builder(requireContext(), notificationChannelId)
-            .setContentTitle("Alert")
-            .setContentText("Don't forget to check weather today!: ${calendar.time}")
-            .setSmallIcon(R.drawable.ic_notifications)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
+        // Create a PendingIntent for the AlarmReceiver
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
-        notificationManager.notify(0, notification)
+        // Schedule the alarm to trigger the notification at the selected time
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            pendingIntent
+        )
+
+        Toast.makeText(requireContext(), "Notification Scheduled!", Toast.LENGTH_SHORT).show()
     }
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun requestExactAlarmPermission(calendar: Calendar) {
@@ -195,21 +229,22 @@ class WeatherAlertFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestNotificationPermission(calendar: Calendar) {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_NOTIFICATION_PERMISSION)
         } else {
             showNotification(calendar)
         }
     }
 
-
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                Toast.makeText(requireContext(), "Notification Permission Granted!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Notification Permission Denied!", Toast.LENGTH_SHORT).show()
+        when (requestCode) {
+            REQUEST_CODE_NOTIFICATION_PERMISSION -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(requireContext(), "Notification Permission Granted!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Notification Permission Denied!", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
