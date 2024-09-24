@@ -24,6 +24,7 @@ import com.example.cloudvibe.home.viewmodel.HomeViewModel
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.database.toHourly
 import com.example.cloudvibe.model.network.data.Hourly
+import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -40,7 +41,7 @@ class FavoritWeatherFragment : Fragment() {
     private lateinit var dailyForecastAdapter: DailyAdapter
     private val sharedViewModel: SharedViewModel by activityViewModels() // ViewModel shared with MapFragment
     private val homeViewModel: HomeViewModel by viewModels()
-
+    private lateinit var sharedpreferences: SharedPreferencesHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,6 +52,8 @@ class FavoritWeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFavoritWeatherBinding.inflate(inflater, container, false)
+        // Initialize sharedpreferences before any setup
+        sharedpreferences = SharedPreferencesHelper(requireContext())
         return binding.root
     }
 
@@ -62,23 +65,28 @@ class FavoritWeatherFragment : Fragment() {
             Log.d("hamza", "onViewCreated: ${sharedViewModel.detailsLocation.value}")
             fetchWeatherData(sharedViewModel.detailsLocation.value!!.latitude, sharedViewModel.detailsLocation.value!!.longitude)
         }
+
         setupRecyclerViews()
         setupObservers()
     }
 
     private fun setupRecyclerViews() {
-        hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), "°C", "km/h")
+        val unitSymbol = "°C"
+        val speedSymbol = "km/h"
+
+        hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), unitSymbol, speedSymbol)
         binding.recyclerViewForecast.apply {
-            layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = hourlyForecastAdapter
         }
 
-        dailyForecastAdapter = DailyAdapter(mutableListOf(), "°C", requireContext())
+        val unitsSymbolFromViewModel = homeViewModel.getUnitsSymbol()
+        dailyForecastAdapter = DailyAdapter(mutableListOf(), unitsSymbolFromViewModel, requireContext())
         binding.dayRecycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = dailyForecastAdapter
         }
+
     }
 
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
@@ -86,16 +94,10 @@ class FavoritWeatherFragment : Fragment() {
         homeViewModel.fetchAndDisplayWeather(
             latitude,
             longitude,
-            "metric",
-            "en",
-            "7af08d0e1d543aea9b340405ceed1c3d"
         )
         homeViewModel.fetchAndDisplayForecast(
             latitude,
             longitude,
-            "metric",
-            "en",
-            "7af08d0e1d543aea9b340405ceed1c3d"
         )
     }
 
@@ -125,14 +127,15 @@ class FavoritWeatherFragment : Fragment() {
             homeViewModel.savedForecast.collect { forecastItems ->
                 val today = LocalDate.now()
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
                 val dailyData = forecastItems
                     .filter { forecast ->
                         val forecastDate = LocalDate.parse(forecast.date.split(" ")[0], formatter)
                         !forecastDate.isBefore(today)
                     }
                     .groupBy { it.date.split(" ")[0] }
-                    .map { (_, forecasts) -> forecasts.first() }
+                    .map { (_, forecasts) ->
+                        forecasts.random()
+                    }
                     .take(6)
 
                 dailyForecastAdapter.updateList(dailyData, "°C")

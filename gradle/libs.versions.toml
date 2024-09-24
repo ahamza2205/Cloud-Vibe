@@ -47,6 +47,8 @@ workRuntimeKtx = "2.9.1"
 core = "1.13.1"
 googleGmsGoogleServices = "4.4.2"
 hiltCommon = "1.2.0"
+preference = "1.2.0"
+preferenceKtx = "1.2.1"
 
 [libraries]
 android = { module = "com.mapbox.maps:android", version.ref = "android" }
@@ -102,6 +104,8 @@ threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref 
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
 work-runtime-ktx-v271 = { module = "androidx.work:work-runtime-ktx", version.ref = "androidxWorkRuntimeKtx" }
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCommon" }
+androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

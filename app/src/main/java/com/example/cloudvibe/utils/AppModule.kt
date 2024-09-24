@@ -5,6 +5,7 @@ import com.example.cloudvibe.model.repository.WeatherRepository
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.database.WeatherDatabase
 import com.example.cloudvibe.model.network.WeatherApiService
+import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,8 +37,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherRepository(api: WeatherApiService, dao: WeatherDao): WeatherRepository {
-        return WeatherRepository(api, dao)
+    fun provideWeatherRepository(api: WeatherApiService, dao: WeatherDao, sharedPreferencesHelper: SharedPreferencesHelper): WeatherRepository {
+        return WeatherRepository(api, dao, sharedPreferencesHelper)
     }
 
+    @Provides
+    @Singleton
+    fun provideSharedPreferencesHelper(@ApplicationContext context: Context): SharedPreferencesHelper {
+        return SharedPreferencesHelper(context)
+    }
 }
+

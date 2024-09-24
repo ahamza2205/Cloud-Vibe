@@ -13,7 +13,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.cloudvibe.R
 import com.example.cloudvibe.model.database.ForecastData
+import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import com.example.cloudvibe.utils.UnitConverter
+import com.example.cloudvibe.utils.UnitConverter.getWeatherIconResource
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -21,14 +23,16 @@ import java.time.format.DateTimeFormatter
 
 class DailyAdapter(
     private var dailyList: MutableList<ForecastData>,
-    private var symbol: String,
+    private var symbol: String, // Temperature unit symbol
     private val context: Context
+
 ) : RecyclerView.Adapter<DailyAdapter.MyViewHolder>() {
 
-    companion object {
+ /*   companion object {
         const val CELSIUS = "C"
         const val FAHRENHEIT = "F"
-    }
+        const val KELVIN = "K"
+    }*/
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -51,33 +55,39 @@ class DailyAdapter(
 
         var maxd = currentDaily.maxTemp
         var mind = currentDaily.minTemp
-        maxd = when (symbol) {
-            CELSIUS -> UnitConverter.kelvinToCelsius(maxd)
-            FAHRENHEIT -> UnitConverter.kelvinToFahrenheit(maxd)
-            else -> maxd
-        }
-        mind = when (symbol) {
-            CELSIUS -> UnitConverter.kelvinToCelsius(mind)
-            FAHRENHEIT -> UnitConverter.kelvinToFahrenheit(mind)
-            else -> mind
-        }
+
+        maxd = convertTemperature(maxd.toFloat(), symbol)
+        mind = convertTemperature(mind.toFloat(), symbol)
 
         val maxDegree = maxd.toInt()
         val minDegree = mind.toInt()
         val icon = currentDaily.weather[0].icon
-        val link = "https://openweathermap.org/img/wn/$icon@2x.png"
+        val iconResource = getWeatherIconResource(icon)
+
+        holder.iconView.setImageResource(iconResource)
         val dayName = getFormattedDay(currentDaily.dt)
         val state = currentDaily.weather[0].description
 
         holder.dayTV.text = dayName
         holder.stateTV.text = state
-        holder.maxDegreeTV.text = "$maxDegree$symbol"
-        holder.minDegreeTV.text = "$minDegree$symbol"
+        holder.maxDegreeTV.text = "$maxDegree"
+        holder.minDegreeTV.text = "$minDegree $symbol"
+    }
 
-        Glide.with(context)
-            .load(link)
-            .apply(RequestOptions().override(100, 100).placeholder(R.drawable.ic_launcher_foreground))
-            .into(holder.iconView)
+
+/*    fun convertTemperature(temp: Double, scale: String = "K"): String {
+        return when (scale) {
+            "C" -> "${(temp - 273.15).toInt()}°C"
+            "F" -> "${((temp - 273.15) * 9/5 + 32).toInt()}°F"
+            else -> "${(temp.toInt()).toString()} K"
+        }
+    }*/
+    private fun convertTemperature(tempInCelsius: Float, unit: String): Float {
+        return when (unit) {
+            "K" -> tempInCelsius + 273.15f
+            "F" -> (tempInCelsius * 9 / 5) + 32
+            else -> tempInCelsius // Celsius by default
+        }
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -99,3 +109,4 @@ class DailyAdapter(
         }
     }
 }
+
