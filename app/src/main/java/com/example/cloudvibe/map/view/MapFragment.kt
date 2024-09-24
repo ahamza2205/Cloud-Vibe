@@ -16,14 +16,19 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cloudvibe.R
 import com.example.cloudvibe.activity.MainActivity
 import com.example.cloudvibe.favorit.view.FavoritFragment
+import com.example.cloudvibe.map.view.LocationAdapter
 import com.example.cloudvibe.model.database.FavoriteCity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
@@ -39,6 +44,8 @@ class MapFragment : Fragment(), LocationListener {
 
     private lateinit var mapView: MapView
     private lateinit var searchEditText: EditText
+    private lateinit var cityAdapter: LocationAdapter
+    private lateinit var recyclerView: RecyclerView
     private var selectedLocationMarker: Marker? = null
     private var currentLocationMarker: Marker? = null
 
@@ -59,15 +66,43 @@ class MapFragment : Fragment(), LocationListener {
 
         mapView = view.findViewById(R.id.map)
         searchEditText = view.findViewById(R.id.mainEditText)
+        recyclerView = view.findViewById(R.id.recyclerView)
+        cityAdapter = LocationAdapter { city ->
+            // When a city is selected from the list, set it in the EditText
+            searchEditText.setText(city)
+            recyclerView.visibility = View.GONE
+        }
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = cityAdapter
+
+        // Text changed listener for filtering cities
+        searchEditText.addTextChangedListener { text ->
+            mapViewModel.filterCityList(text.toString())
+        }
+
+        // Observing filtered city list
+        lifecycleScope.launchWhenStarted {
+            mapViewModel.filteredCityList.collectLatest { filteredList ->
+                if (filteredList.isEmpty()) {
+                    recyclerView.visibility = View.GONE
+                } else {
+                    recyclerView.visibility = View.VISIBLE
+                    cityAdapter.submitList(filteredList)
+                }
+            }
+        }
 
         mapView.setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
         mapView.setBuiltInZoomControls(true)
         mapView.setMultiTouchControls(true)
 
+        // Set initial point on the map
         val startPoint = GeoPoint(31.2001, 29.9187)
         mapView.controller.setZoom(15.0)
         mapView.controller.setCenter(startPoint)
 
+        // Set the search action for the searchEditText
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val cityName = searchEditText.text.toString().trim()
@@ -82,19 +117,23 @@ class MapFragment : Fragment(), LocationListener {
             }
         }
 
+        // Observing city coordinates to update the map
         mapViewModel.cityCoordinates.observe(viewLifecycleOwner) { geoPoint ->
             mapView.controller.setCenter(geoPoint)
             addSelectedMarker(geoPoint)
             showConfirmationDialog(searchEditText.text.toString(), geoPoint)
         }
 
+        // Handle errors from ViewModel
         mapViewModel.error.observe(viewLifecycleOwner) { errorMessage ->
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
 
+        // Get current location
         getCurrentLocation()
     }
 
+    // Add a marker to the selected location on the map
     private fun addSelectedMarker(point: GeoPoint) {
         selectedLocationMarker?.let {
             mapView.overlays.remove(it)
@@ -102,7 +141,7 @@ class MapFragment : Fragment(), LocationListener {
 
         selectedLocationMarker = Marker(mapView).apply {
             position = point
-            icon = resources.getDrawable(R.drawable.ic_selected_marker) // Your selected location marker icon
+            icon = resources.getDrawable(R.drawable.ic_selected_marker) // Selected location marker icon
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         }
 
@@ -110,6 +149,7 @@ class MapFragment : Fragment(), LocationListener {
         mapView.invalidate()
     }
 
+    // Show confirmation dialog to add city to favorites
     private fun showConfirmationDialog(cityName: String, geoPoint: GeoPoint) {
         AlertDialog.Builder(requireContext())
             .setTitle("Add to Favorites")
@@ -120,14 +160,13 @@ class MapFragment : Fragment(), LocationListener {
                 val favoritFragment = FavoritFragment()
                 val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
                 fragmentTransaction.replace(R.id.fragment_container, favoritFragment)
-                fragmentTransaction.commit() 
+                fragmentTransaction.commit()
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-
-
+    // Save selected city to favorites
     private fun saveCityToFavorites(cityName: String, lat: Double, lon: Double) {
         val favoriteCity = FavoriteCity(cityName = cityName, latitude = lat, longitude = lon)
 
@@ -137,6 +176,7 @@ class MapFragment : Fragment(), LocationListener {
         }
     }
 
+    // Get the current location of the user
     private fun getCurrentLocation() {
         val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -149,18 +189,27 @@ class MapFragment : Fragment(), LocationListener {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
     }
 
+    // Called when the location is updated
     override fun onLocationChanged(location: Location) {
-        val currentPoint = GeoPoint(location.latitude, location.longitude)
+        mapView?.let { map ->
+            val currentPoint = GeoPoint(location.latitude, location.longitude)
 
-        currentLocationMarker = Marker(mapView).apply {
-            position = currentPoint
-            icon = resources.getDrawable(R.drawable.ic_location_marker) // Your current location marker icon
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            currentLocationMarker?.let {
+                map.overlays.remove(it)
+            }
+
+            currentLocationMarker = Marker(map).apply {
+                position = currentPoint
+                icon = resources.getDrawable(R.drawable.ic_location_marker) // Your current location marker icon
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            }
+
+            map.overlays.add(currentLocationMarker)
+            map.controller.setCenter(currentPoint)
+            map.invalidate()
+        } ?: run {
+            Toast.makeText(requireContext(), "Map is not initialized", Toast.LENGTH_SHORT).show()
         }
-
-        mapView.overlays.add(currentLocationMarker)
-        mapView.controller.setCenter(currentPoint)
-        mapView.invalidate()
     }
 
     override fun onResume() {
