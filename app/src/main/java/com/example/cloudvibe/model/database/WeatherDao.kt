@@ -1,6 +1,7 @@
 package com.example.cloudvibe.model.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -32,6 +33,20 @@ interface WeatherDao {
 
     @Query("SELECT * FROM forecast_data")
     fun getAllForecasts(): Flow<List<ForecastData>>
-}
+
+
+    // Favorite Cities
+
+        @Query("SELECT * FROM favorite_cities")
+        fun getAllLocal(): Flow<List<FavoriteCity>>
+
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        suspend fun insert(favCity: FavoriteCity)
+
+        @Delete
+        suspend fun delete(favCity : FavoriteCity)
+    }
+
+
 
 

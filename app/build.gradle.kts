@@ -177,8 +177,8 @@ dependencies {
     implementation (libs.androidx.legacy.support.v4) // Ensure both are compatible
 
     // Hilt for dependency injection
-    implementation ("com.google.dagger:hilt-android:2.52")
-    kapt ("com.google.dagger:hilt-compiler:2.52")
+    implementation ("com.google.dagger:hilt-android:2.48")
+    kapt ("com.google.dagger:hilt-compiler:2.48")
 
     // work manager
     implementation (libs.work.runtime.ktx.v271)

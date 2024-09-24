@@ -41,11 +41,7 @@ class HourlyForecastAdapter(
     fun updateList(newList: List<Hourly>, newSymbol: String, newSpeedSymbol: String) {
         val currentDay = getCurrentDay()
 
-        // Filter the data to include only hours of the current day
-        dataList = newList.filter {
-            val hourDay = getDayFromTimestamp(it.dt)
-            hourDay == currentDay
-        }
+        dataList = newList
 
         // Update the symbol and speed unit
         this.symbol = newSymbol

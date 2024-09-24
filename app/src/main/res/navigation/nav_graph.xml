@@ -31,7 +31,14 @@
         tools:layout="@layout/fragment_weather_alert"/>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.cloudvibe.MapFragment"
+        android:name="com.example.cloudvibe.map.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map"/>
+        tools:layout="@layout/fragment_map">
+
+    </fragment>
+    <fragment
+        android:id="@+id/favoritWeatherFragment"
+        android:name="com.example.cloudvibe.favorit.favdetil.FavoritWeatherFragment"
+        android:label="FavoritWeatherFragment" >
+    </fragment>
 </navigation>
