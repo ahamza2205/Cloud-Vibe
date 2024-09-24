@@ -66,8 +66,8 @@ class HourlyForecastAdapter(
 
     private fun convertTemperature(tempInCelsius: Float, unit: String): Float {
         return when (unit) {
-            "K" -> tempInCelsius + 273.15f
-            "F" -> (tempInCelsius * 9 / 5) + 32
+            "°K" -> tempInCelsius + 273.15f
+            "°F" -> (tempInCelsius * 9 / 5) + 32
             else -> tempInCelsius  // Celsius by default
         }
     }

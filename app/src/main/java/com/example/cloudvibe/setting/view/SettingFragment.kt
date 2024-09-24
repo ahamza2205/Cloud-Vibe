@@ -53,9 +53,9 @@ class SettingFragment : Fragment() {
         val tempGroup = view.findViewById<RadioGroup>(R.id.radio_group_temperature)
         tempGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.rb_celsius -> sharedPreferencesHelper.saveUnits("C")
-                R.id.rb_kelvin -> sharedPreferencesHelper.saveUnits("K")
-                R.id.rb_fahrenheit -> sharedPreferencesHelper.saveUnits("F")
+                R.id.rb_celsius -> sharedPreferencesHelper.saveUnits("°C")
+                R.id.rb_kelvin -> sharedPreferencesHelper.saveUnits("°K")
+                R.id.rb_fahrenheit -> sharedPreferencesHelper.saveUnits("°F")
             }
         }
     }

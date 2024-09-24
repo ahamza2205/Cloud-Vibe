@@ -38,7 +38,7 @@ class SharedPreferencesHelper @Inject constructor(context: Context) {
     }
 
     fun getUnits(): String? {
-        return preferences.getString("unit", "C") // Default to Celsius (metric)
+        return preferences.getString("unit", "°C") // Default to Celsius (metric)
     }
 
     fun saveWindSpeedUnit(unit: String) {

@@ -200,8 +200,8 @@ class HomeFragment : Fragment() {
         val savedUnit = homeViewModel.getUnits()
         val convertedTemp = convertTemperature(weatherEntity.temperature, savedUnit)
         val unitSymbol = when (savedUnit) {
-            "F" -> "°F"
-            "K" -> "°K"
+            "°F" -> "°F"
+            "°K" -> "°K"
             else -> "°C"
         }
 
