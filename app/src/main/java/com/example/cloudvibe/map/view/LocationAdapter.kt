@@ -21,7 +21,7 @@ class LocationAdapter(private val onCityClicked: (String) -> Unit) :
         val city = getItem(position)
         holder.bind(city)
         holder.itemView.setOnClickListener {
-            onCityClicked(city)  // عند النقر على العنصر
+            onCityClicked(city)
         }
     }
 
