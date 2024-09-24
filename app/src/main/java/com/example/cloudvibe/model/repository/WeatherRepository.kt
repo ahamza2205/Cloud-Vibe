@@ -6,6 +6,8 @@ import com.example.cloudvibe.model.database.ForecastData
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.network.WeatherApiService
+import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.sharedpreferences.SharedPreferencesManager
 import com.example.cloudvibe.utils.WeatherMapper.mapForecastResponseToData
 import com.example.cloudvibe.utils.WeatherMapper.mapWeatherResponseToEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,30 +21,26 @@ import javax.inject.Singleton
 @Singleton
 class WeatherRepository @Inject constructor(
     private val weatherApiService: WeatherApiService,
-    private val weatherDao: WeatherDao
+    private val weatherDao: WeatherDao,
+    private val  SharedPreferencesHelper: SharedPreferencesHelper
 ) {
     private val TAG = "WeatherRepository"
 
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun getWeatherFromApiAndSaveToLocal(
-        lat: Double, lon: Double, units: String, language: String, apiKey: String
+        lat: Double, lon: Double, language: String
     ): Flow<List<WeatherEntity>> {
         return flow {
             try {
-                Log.d(TAG, "Fetching current weather and saving to local for lat: $lat, lon: $lon")
 
-                val response = weatherApiService.getCurrentWeather(lat, lon, units, language, apiKey)
-                Log.d(TAG, "Received weather response for saving: $response")
+                val response = weatherApiService.getCurrentWeather(lat, lon, language)
 
                 val weatherEntity = mapWeatherResponseToEntity(response)
 
                 weatherDao.deleteAllWeather()
-                Log.d(TAG, "Old weather data deleted from local database")
 
                 weatherDao.insertWeather(weatherEntity)
-                Log.d(TAG, "Weather data saved to local database: $weatherEntity")
             } catch (e: Exception) {
-                Log.e(TAG, "Error fetching weather for saving", e)
             }
 
             emitAll(getSavedWeather())
@@ -52,26 +50,20 @@ class WeatherRepository @Inject constructor(
     }
 
     private fun getSavedWeather(): Flow<List<WeatherEntity>> {
-        Log.d(TAG, "Fetching saved weather from local database")
         return weatherDao.getAllWeather()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun fetchForecastFromApiAndSave(lat: Double, lon: Double, units: String, language: String, apiKey: String): Flow<List<ForecastData>> {
+    suspend fun fetchForecastFromApiAndSave(lat: Double, lon: Double,  language: String): Flow<List<ForecastData>> {
         return flow {
-            Log.d(TAG, "Fetching forecast weather from API for lat: $lat, lon: $lon")
             try {
-                val response = weatherApiService.getForecastWeather(lat, lon, units, language, apiKey)
+                val response = weatherApiService.getForecastWeather(lat, lon,  language)
                 response.body()?.let { forecastResponse ->
                     val forecastList = mapForecastResponseToData(forecastResponse)
-                    Log.d(TAG, "Received forecast response: $forecastResponse")
                     weatherDao.clearForecasts()
-                    Log.d(TAG, "Cleared old forecasts from local database")
                     weatherDao.insertForecast(forecastList)
-                    Log.d(TAG, "Forecast data saved to local database: $forecastList")
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error fetching forecast weather from API", e)
             }
             emitAll(getSavedForecast())
         }.flatMapLatest {
@@ -80,7 +72,6 @@ class WeatherRepository @Inject constructor(
     }
 
     private fun getSavedForecast(): Flow<List<ForecastData>> {
-        Log.d(TAG, "Fetching saved forecast from local database")
         return weatherDao.getAllForecasts()
     }
 
@@ -96,4 +87,23 @@ class WeatherRepository @Inject constructor(
         weatherDao.delete(favoriteCity)
     }
 
+    // sheared preferences
+    fun getLocation(): Pair<Double, Double>? {
+        return SharedPreferencesHelper.getLocation()
+    }
+
+    fun saveLocation(latitude: Double, longitude: Double) {
+        SharedPreferencesHelper.saveLocation(latitude, longitude)
+    }
+    fun getLanguage(): String? {
+        return SharedPreferencesHelper.getLanguage()
+    }
+
+    fun getUnits(): String {
+        return SharedPreferencesHelper.getUnits().toString()
+    }
+
+    fun getWindSpeedUnit(): String? {
+        return SharedPreferencesHelper.getWindSpeedUnit()
+    }
 }

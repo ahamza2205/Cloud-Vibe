@@ -91,6 +91,7 @@
                     android:textSize="18dp" />
 
                 <RadioGroup
+                    android:id="@+id/radio_group_language"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -148,6 +149,7 @@
                     android:textSize="18dp" />
 
                 <RadioGroup
+                    android:id="@+id/radio_group_temperature"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -207,6 +209,7 @@
                     android:textSize="18dp" />
 
                 <RadioGroup
+                    android:id="@+id/radio_group_wind_speed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -229,6 +232,17 @@
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
                         android:text="@string/MileHour"
+                        android:textColor="@color/light_clouds"
+                        android:textSize="16dp" />
+
+                    <!-- New RadioButton for km/h -->
+                    <RadioButton
+                        android:id="@+id/rb_km_hour"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:fontFamily="@font/akatab_bold"
+                        android:padding="8dp"
+                        android:text="@string/Kmh"
                         android:textColor="@color/light_clouds"
                         android:textSize="16dp" />
                 </RadioGroup>
@@ -255,32 +269,25 @@
                 android:textColor="@color/white"
                 android:textSize="18dp" />
 
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="8dp">
+            <RadioButton
+                android:id="@+id/disabled"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:fontFamily="@font/akatab_bold"
+                android:padding="8dp"
+                android:text="@string/Enable"
+                android:textColor="@color/light_clouds"
+                android:textSize="16dp" />
 
-                <RadioButton
-                    android:id="@+id/rb_enable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:fontFamily="@font/akatab_bold"
-                    android:padding="8dp"
-                    android:text="@string/Enable"
-                    android:textColor="@color/light_clouds"
-                    android:textSize="18dp" />
-
-                <RadioButton
-                    android:id="@+id/rb_disable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:fontFamily="@font/akatab_bold"
-                    android:padding="8dp"
-                    android:text="@string/Disable"
-                    android:textColor="@color/light_clouds"
-                    android:textSize="18dp" />
-            </RadioGroup>
+            <RadioButton
+                android:id="@+id/enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:fontFamily="@font/akatab_bold"
+                android:padding="8dp"
+                android:text="@string/Disable"
+                android:textColor="@color/light_clouds"
+                android:textSize="16dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

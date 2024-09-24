@@ -24,10 +24,14 @@ class HomeViewModel @Inject constructor(
     private val _savedForecast = MutableStateFlow<List<ForecastData>>(emptyList())
     val savedForecast: StateFlow<List<ForecastData>> = _savedForecast
 
-    fun fetchAndDisplayWeather(lat: Double, lon: Double, units: String, language: String, apiKey: String) {
+    private val _tempUnit = MutableStateFlow<String>("")
+    val tempUnit: StateFlow<String> get()=_tempUnit
+
+    fun fetchAndDisplayWeather(lat: Double, lon: Double ) {
+        val language = repository.getLanguage() ?: "en"
         viewModelScope.launch {
             try {
-                repository.getWeatherFromApiAndSaveToLocal(lat, lon, units, language, apiKey).collect { weatherList ->
+                repository.getWeatherFromApiAndSaveToLocal(lat, lon,  language, ).collect { weatherList ->
                     _savedWeather.value = weatherList
                 }
             } catch (e: Exception) {
@@ -36,14 +40,36 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun fetchAndDisplayForecast(lat: Double, lon: Double, units: String, language: String, apiKey: String) {
+    fun fetchAndDisplayForecast(lat: Double, lon: Double ) {
+        val language = repository.getLanguage() ?: "en"
         viewModelScope.launch {
-            repository.fetchForecastFromApiAndSave(lat, lon, units, language, apiKey).collect { forecastList ->
+            repository.fetchForecastFromApiAndSave(lat, lon, language).collect { forecastList ->
                 _savedForecast.value = forecastList
             }
         }
     }
 
+    // Get saved location from repository
 
+    fun saveLocation(latitude: Double, longitude: Double) {
+        repository.saveLocation(latitude, longitude)
+    }
+    fun getUnits(): String {
+        return repository.getUnits() ?: "metric"
+    }
 
+    fun getWindSpeedUnit(): String {
+        return repository.getWindSpeedUnit() ?: "km/h"
+    }
+    fun getUnitsSymbol(): String {
+        return when (getUnits()) {
+            "imperial" -> "°F"
+            "kelvin" -> "K"
+            else -> "°C"
+        }
+    }
+
+    fun updateSettings() {
+        _tempUnit.value = repository.getUnits()
+        }
 }

@@ -49,11 +49,11 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyAdapter
-        private val homeViewModel: HomeViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels() // ViewModel shared with MapFragment
+    private val homeViewModel: HomeViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private lateinit var sharedpreferences: SharedPreferencesHelper
+    private lateinit var symbol: String
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     override fun onCreateView(
@@ -61,8 +61,16 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
 
+        homeViewModel.updateSettings()
+        lifecycleScope.launch {
+            homeViewModel.tempUnit.collect { unit ->
+                symbol = unit
+                Log.d("TAG1", "onCreateView: $symbol")
+            }
+        }
+
+        return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -70,32 +78,28 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerViews()
         setupLocationServices()
-        setupSharedPreferences()
         setupObservers()
+        checkLocationPermission()
 
-        //// ---- MAP --- /////
-        // Listen for selected location from MapFragment
-        // Observe the selected location from SharedViewModel
         sharedViewModel.selectedLocation.observe(viewLifecycleOwner) { location ->
             val (latitude, longitude) = location
-            // Use latitude and longitude to fetch weather data
             fetchWeatherData(latitude, longitude)
         }
+
         arguments?.getString("city_name")?.let { cityName ->
             fetchWeatherDataByCityName(cityName)
-
         }
+
     }
 
-
     private fun setupRecyclerViews() {
-        hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), "°C", "km/h")
+        hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), symbol, "km/h")
         binding.recyclerViewForecast.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = hourlyForecastAdapter
         }
 
-        dailyForecastAdapter = DailyAdapter(mutableListOf(), "°C", requireContext())
+        dailyForecastAdapter = DailyAdapter(mutableListOf(), symbol, requireContext())
         binding.dayRecycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = dailyForecastAdapter
@@ -106,30 +110,17 @@ class HomeFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
-    private fun setupSharedPreferences() {
-        sharedpreferences = SharedPreferencesHelper(requireContext())
-        val savedLocation = sharedpreferences.getLocation()
-
-        if (savedLocation != null) {
-            val (latitude, longitude) = savedLocation
-            fetchWeatherData(latitude, longitude)
-        } else {
-            checkLocationPermission()
-        }
-    }
-
-    private fun fetchWeatherData(latitude: Double, longitude: Double) {
-        Log.d("HomeFragment", "Fetching weather data for lat: $latitude, lon: $longitude")
-        homeViewModel.fetchAndDisplayWeather(latitude, longitude, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
-        homeViewModel.fetchAndDisplayForecast(latitude, longitude, "metric", "en", "7af08d0e1d543aea9b340405ceed1c3d")
-    }
-
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         } else {
             getLocation()
         }
+    }
+
+    private fun fetchWeatherData(latitude: Double, longitude: Double) {
+        homeViewModel.fetchAndDisplayWeather(latitude, longitude)
+        homeViewModel.fetchAndDisplayForecast(latitude, longitude)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -155,7 +146,7 @@ class HomeFragment : Fragment() {
                 for (location: Location in locationResult.locations) {
                     val lat = location.latitude
                     val lon = location.longitude
-                    sharedpreferences.saveLocation(lat, lon)
+                    homeViewModel.saveLocation(lat, lon)
                     fetchWeatherData(lat, lon)
                 }
             }
@@ -182,7 +173,7 @@ class HomeFragment : Fragment() {
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { forecastItems ->
                     val hourlyData: List<Hourly> = forecastItems.map { it.toHourly() }
-                    hourlyForecastAdapter.updateList(hourlyData, "°C", "km/h")
+                    hourlyForecastAdapter.updateList(hourlyData, symbol, "km/h")
                 }
         }
 
@@ -197,36 +188,56 @@ class HomeFragment : Fragment() {
                         !forecastDate.isBefore(today)
                     }
                     .groupBy { it.date.split(" ")[0] }
-                    .map { (_, forecasts) -> forecasts.first() }
+                    .map { (_, forecasts) -> forecasts.random() }
                     .take(6)
 
-                dailyForecastAdapter.updateList(dailyData, "°C")
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.savedWeather.collect { weatherList ->
-                if (weatherList.isNotEmpty()) {
-                    val weather = weatherList.last()
-                    displayWeatherData(weather)
-                }
+                dailyForecastAdapter.updateList(dailyData, symbol)
             }
         }
     }
 
-    @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun displayWeatherData(weatherEntity: WeatherEntity) {
+        val savedUnit = homeViewModel.getUnits()
+        val convertedTemp = convertTemperature(weatherEntity.temperature, savedUnit)
+        val unitSymbol = when (savedUnit) {
+            "F" -> "°F"
+            "K" -> "°K"
+            else -> "°C"
+        }
+
+        binding.tvTemperature.text = String.format("%.1f ", convertedTemp) + unitSymbol
+
+        val windSpeedUnit = homeViewModel.getWindSpeedUnit()
+        val convertedWindSpeed = convertWindSpeed(weatherEntity.windSpeed, windSpeedUnit)
+
         with(binding) {
             tvLocation.text = weatherEntity.locationName
             tvCountry.text = " ${weatherEntity.country}"
             tvLocalTime.text = convertUnixTimeToTime(weatherEntity.timestamp)
-            tvTemperature.text = String.format("%.1f ", weatherEntity.temperature) + "°C"
             tvCondition.text = weatherEntity.description
-            textViewWindspeed.text = " ${weatherEntity.windSpeed}km/h"
+            textViewWindspeed.text = " ${convertedWindSpeed}$windSpeedUnit"
             textViewHumidity.text = " ${weatherEntity.humidity}%"
-            textViewPressure.text = " ${weatherEntity.pressure}mBar "
+            textViewPressure.text = " ${weatherEntity.pressure}mBar"
             textViewSunrise.text = convertUnixTimeToTime(weatherEntity.sunrise)
             textViewSunset.text = convertUnixTimeToTime(weatherEntity.sunset)
         }
+    }
+
+    private fun convertTemperature(tempInCelsius: Float, unit: String): Number {
+        return when (unit) {
+            "K" -> tempInCelsius + 273.15
+            "F" -> (tempInCelsius * 9 / 5) + 32
+            else -> tempInCelsius
+        }
+    }
+
+    private fun convertWindSpeed(speedInKmH: Double, unit: String): Double {
+        val convertedSpeed = when (unit) {
+            "m/s" -> speedInKmH / 3.6
+            "mph" -> speedInKmH * 0.621371
+            else -> speedInKmH
+        }
+        return (Math.round(convertedSpeed * 100.0) / 100.0)
     }
 
     private fun convertUnixTimeToTime(unixTime: Long): String {
@@ -243,7 +254,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // Search View Functions to fetch weather data by city name
     private fun fetchWeatherDataByCityName(cityName: String) {
         Log.d("HomeFragment", "Searching for city: $cityName")
         getCoordinatesFromCityName(cityName)
@@ -252,40 +262,29 @@ class HomeFragment : Fragment() {
     private fun getCoordinatesFromCityName(cityName: String) {
         val url = "https://nominatim.openstreetmap.org/search?q=$cityName&format=json&addressdetails=1"
 
-        val request = OkHttpClient().newCall(
-            okhttp3.Request.Builder()
-                .url(url)
-                .build()
-        )
+        val client = OkHttpClient()
+        val request = okhttp3.Request.Builder()
+            .url(url)
+            .build()
 
-        request.enqueue(object : okhttp3.Callback {
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                Log.e("HomeFragment", "Error fetching coordinates: ${e.message}")
+            }
+
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                val json = response.body?.string()
-                if (json != null) {
-                    val jsonArray = JSONArray(json)
+                if (response.isSuccessful) {
+                    val responseData = response.body?.string()
+                    val jsonArray = JSONArray(responseData)
                     if (jsonArray.length() > 0) {
-                        val jsonObject = jsonArray.getJSONObject(0)
-                        val latitude = jsonObject.getDouble("lat")
-                        val longitude = jsonObject.getDouble("lon")
-                        fetchWeatherData(latitude, longitude)
+                        val lat = jsonArray.getJSONObject(0).getDouble("lat")
+                        val lon = jsonArray.getJSONObject(0).getDouble("lon")
+                        fetchWeatherData(lat, lon)
                     } else {
-                        activity?.runOnUiThread {
-                            Toast.makeText(requireContext(), "City not found", Toast.LENGTH_SHORT).show()
-                        }
+                        Log.d("HomeFragment", "No results found for city: $cityName")
                     }
                 }
             }
-
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                activity?.runOnUiThread {
-                    Toast.makeText(requireContext(), "Error fetching coordinates", Toast.LENGTH_SHORT).show()
-                }
-            }
         })
-
     }
 }
-
-
-
-
