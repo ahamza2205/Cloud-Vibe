@@ -1,5 +1,8 @@
 package com.example.cloudvibe.setting.view
 
+import android.content.Context
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +11,10 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
+import com.example.cloudvibe.activity.MainActivity
 import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.utils.LocaleHelper.updateLocale
+import java.util.Locale
 
 class SettingFragment : Fragment() {
 
@@ -65,11 +71,28 @@ class SettingFragment : Fragment() {
         val languageGroup = view.findViewById<RadioGroup>(R.id.radio_group_language)
         languageGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.rb_english -> sharedPreferencesHelper.saveLanguage("en")
-                R.id.rb_arabic -> sharedPreferencesHelper.saveLanguage("ar")
+                R.id.rb_english -> {
+                    sharedPreferencesHelper.saveLanguage("en")
+                    //updateLocaleAndRecreate("en")
+                    (requireActivity() as MainActivity).checkAndChangLocality()
+                }
+                R.id.rb_arabic -> {
+                    sharedPreferencesHelper.saveLanguage("ar")
+                    //updateLocaleAndRecreate("ar")
+                    (requireActivity() as MainActivity).checkAndChangLocality()
+                }
             }
         }
     }
+
+    private fun updateLocaleAndRecreate(languageCode: String) {
+        updateLocale(requireContext(), languageCode)
+
+        val fragmentManager = parentFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.detach(this).attach(this).commit()
+    }
+
 
     // Function to handle Wind setting (Meter/sec or Miles/hour)
     private fun setupWindSetting(view: View) {

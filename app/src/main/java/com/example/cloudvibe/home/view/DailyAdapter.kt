@@ -70,8 +70,8 @@ class DailyAdapter(
 
         holder.dayTV.text = dayName
         holder.stateTV.text = state
-        holder.maxDegreeTV.text = "$maxDegree"
-        holder.minDegreeTV.text = "$minDegree $symbol"
+        holder.maxDegreeTV.text = "${UnitConverter.parseIntegerIntoArabic(maxDegree.toString())}"
+        holder.minDegreeTV.text = "${UnitConverter.parseIntegerIntoArabic(minDegree.toString())} ${symbol}"
     }
 
 

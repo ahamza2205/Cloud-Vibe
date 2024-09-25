@@ -25,12 +25,14 @@ class SharedPreferencesHelper @Inject constructor(context: Context) {
         }
     }
 
-    fun saveLanguage(language: String) {
-        preferences.edit().putString("language", language).apply()
+    fun saveLanguage(languageCode: String) {
+        val editor = preferences.edit()
+        editor.putString("language", languageCode)
+        editor.apply()
     }
 
     fun getLanguage(): String? {
-        return preferences.getString("language", "en")
+        return preferences.getString("language", "en") // Default to English
     }
 
     fun saveUnits(unit: String) {

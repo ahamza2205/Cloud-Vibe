@@ -1,6 +1,5 @@
 package com.example.cloudvibe.favorit.favdetil
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -24,7 +23,6 @@ import com.example.cloudvibe.home.viewmodel.HomeViewModel
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.database.toHourly
 import com.example.cloudvibe.model.network.data.Hourly
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -40,9 +38,9 @@ class FavoritWeatherFragment : Fragment() {
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyAdapter
     private val sharedViewModel: SharedViewModel by activityViewModels() // ViewModel shared with MapFragment
-    private val homeViewModel: HomeViewModel by viewModels()
-    private lateinit var symbol: String
+    private val favoritViewModel: HomeViewModel by viewModels()
 
+    private lateinit var symbol: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,9 +51,9 @@ class FavoritWeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFavoritWeatherBinding.inflate(inflater, container, false)
-        homeViewModel.updateSettings()
+        favoritViewModel.updateSettings()
         lifecycleScope.launch {
-            homeViewModel.tempUnit.collect { unit ->
+            favoritViewModel.tempUnit.collect { unit ->
                 symbol = unit
                 Log.d("TAG1", "onCreateView: $symbol")
             }
@@ -92,11 +90,11 @@ class FavoritWeatherFragment : Fragment() {
 
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
         Log.d("HomeFragment", "Fetching weather data for lat: $latitude, lon: $longitude")
-        homeViewModel.fetchAndDisplayWeather(
+        favoritViewModel.fetchAndDisplayWeather(
             latitude,
             longitude,
         )
-        homeViewModel.fetchAndDisplayForecast(
+        favoritViewModel.fetchAndDisplayForecast(
             latitude,
             longitude,
         )
@@ -106,7 +104,7 @@ class FavoritWeatherFragment : Fragment() {
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.savedWeather.collect { weatherList ->
+                favoritViewModel.savedWeather.collect { weatherList ->
                     if (weatherList.isNotEmpty()) {
                         val weather = weatherList.last()
                         displayWeatherData(weather)
@@ -116,7 +114,7 @@ class FavoritWeatherFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.savedForecast
+            favoritViewModel.savedForecast
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { forecastItems ->
                     val hourlyData: List<Hourly> = forecastItems.map { it.toHourly() }
@@ -125,7 +123,7 @@ class FavoritWeatherFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.savedForecast.collect { forecastItems ->
+            favoritViewModel.savedForecast.collect { forecastItems ->
                 val today = LocalDate.now()
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -144,7 +142,7 @@ class FavoritWeatherFragment : Fragment() {
     }
 
     private fun displayWeatherData(weatherEntity: WeatherEntity) {
-        val savedUnit = homeViewModel.getUnits()
+        val savedUnit = favoritViewModel.getUnits()
         val convertedTemp = convertTemperature(weatherEntity.temperature, savedUnit)
         val unitSymbol = when (savedUnit) {
             "°F" -> "°F"
@@ -154,7 +152,7 @@ class FavoritWeatherFragment : Fragment() {
 
         binding.tvTemperature.text = String.format("%.1f ", convertedTemp) + unitSymbol
 
-        val windSpeedUnit = homeViewModel.getWindSpeedUnit()
+        val windSpeedUnit = favoritViewModel.getWindSpeedUnit()
         val convertedWindSpeed = convertWindSpeed(weatherEntity.windSpeed, windSpeedUnit)
 
         with(binding) {

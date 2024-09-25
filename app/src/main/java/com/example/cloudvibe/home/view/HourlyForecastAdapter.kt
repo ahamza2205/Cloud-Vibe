@@ -61,7 +61,7 @@ class HourlyForecastAdapter(
         Log.i("Hour", "onBindViewHolder: $localHour")
 
         holder.degreeTV.text = formattedTemp
-        holder.timeTV.text = formattedTime
+        holder.timeTV.text = "${UnitConverter.parseIntegerIntoArabic(formattedTime.toString())}"
     }
 
     private fun convertTemperature(tempInCelsius: Float, unit: String): Float {

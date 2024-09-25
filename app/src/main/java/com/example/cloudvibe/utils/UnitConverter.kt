@@ -69,4 +69,19 @@ object UnitConverter {
             else -> R.drawable.default_weather_icon
                 }
     }
+
+    fun parseIntegerIntoArabic(number : String) : String
+    {
+        return number
+            .replace("1","١")
+            .replace("2","٢")
+            .replace("3","٣")
+            .replace("4","٤")
+            .replace("5","٥")
+            .replace("6","٦")
+            .replace("7","٧")
+            .replace("8","٨")
+            .replace("9","٩")
+            .replace("0","٠")
+    }
 }

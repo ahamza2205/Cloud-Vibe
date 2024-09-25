@@ -1,5 +1,8 @@
 package com.example.cloudvibe.activity
 
+import android.content.Context
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -16,8 +19,11 @@ import com.example.cloudvibe.alert.WeatherAlertFragment
 import com.example.cloudvibe.favorit.view.FavoritFragment
 import com.example.cloudvibe.home.view.HomeFragment
 import com.example.cloudvibe.setting.view.SettingFragment
+import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.utils.LocaleHelper.updateLocale
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -25,6 +31,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -44,6 +51,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             replaceFragment(HomeFragment())
             navigationView.setCheckedItem(R.id.nav_home)
         }
+
+        checkAndChangLocality()
     }
 
     fun replaceFragment(fragment: Fragment, title: String = "") {
@@ -104,4 +113,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
+     fun checkAndChangLocality()
+    {
+        val languageCode = SharedPreferencesHelper(this).getLanguage()//ar
+        val locale = resources.configuration.locales[0]
+
+        if(locale.language != languageCode)
+        {
+
+            val newLocale = Locale(languageCode ?: "en")
+            Locale.setDefault(newLocale)
+
+            val config = resources.configuration
+
+            config.setLocale(newLocale)
+            config.setLayoutDirection(newLocale)
+
+            resources.updateConfiguration(config,resources.displayMetrics)
+
+            recreate()
+
+           }
+        }
 }

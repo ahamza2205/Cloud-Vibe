@@ -37,8 +37,11 @@ import android.util.Log
 import java.util.Calendar
 
 class WeatherAlertFragment : Fragment() {
-
+    private val sharedPreferencesName = "alert_preferences"
+    private val requestCodeKey = "request_code"
+    var requestCode: Int = 0
     private val notificationChannelId = "channel_id"
+
     companion object {
         private const val REQUEST_CODE_OVERLAY_PERMISSION = 1001
         private const val REQUEST_CODE_NOTIFICATION_PERMISSION = 1002
@@ -50,7 +53,7 @@ class WeatherAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_weather_alert, container, false)
-
+        requestCode = getRequestCodeFromPreferences()
         createNotificationChannel()
 
         val fabAddAlert: FloatingActionButton = view.findViewById(R.id.fab_add_alert)
@@ -70,7 +73,8 @@ class WeatherAlertFragment : Fragment() {
             ).apply {
                 description = "Channel for Weather Alert Notifications"
             }
-            val notificationManager = requireContext().getSystemService(NotificationManager::class.java)
+            val notificationManager =
+                requireContext().getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -112,6 +116,7 @@ class WeatherAlertFragment : Fragment() {
 
         val types = arrayOf("Alarm", "Notification")
         builder.setItems(types) { _, which ->
+            updateRequestCode()
             when (which) {
                 0 -> checkAlarmPermission(calendar)
                 1 -> checkNotificationPermission(calendar)
@@ -140,7 +145,8 @@ class WeatherAlertFragment : Fragment() {
     private fun setAlarm(calendar: Calendar) {
         // Ensure the selected time is in the future
         if (calendar.before(Calendar.getInstance())) {
-            Toast.makeText(requireContext(), "Cannot set alarm for past time!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Cannot set alarm for past time!", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
@@ -151,11 +157,11 @@ class WeatherAlertFragment : Fragment() {
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
 
         // Pass the scheduled time
-        intent.putExtra("SCHEDULED_TIME", alarmTimeInMillis)
-
+        // intent.putExtra("SCHEDULED_TIME", alarmTimeInMillis)
+        intent.action = "Alarm"
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(),
-            0,
+            getRequestCodeFromPreferences(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -173,7 +179,11 @@ class WeatherAlertFragment : Fragment() {
 
             Toast.makeText(requireContext(), "Alarm Set Successfully!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Failed to set alarm: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Failed to set alarm: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
             Log.e("AlarmError", "Error setting alarm", e)
         }
     }
@@ -182,7 +192,10 @@ class WeatherAlertFragment : Fragment() {
     private fun checkOverlayPermission() {
         if (!Settings.canDrawOverlays(requireContext())) {
             // Request the Overlay permission
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${requireContext().packageName}"))
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:${requireContext().packageName}")
+            )
             startActivityForResult(intent, REQUEST_CODE_OVERLAY_PERMISSION)
         }
     }
@@ -193,13 +206,13 @@ class WeatherAlertFragment : Fragment() {
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
 
         // Pass notification type and scheduled time to the receiver
-        intent.putExtra("ALERT_TYPE", "NOTIFICATION")
-        intent.putExtra("SCHEDULED_TIME", calendar.timeInMillis)
-
+        // intent.putExtra("ALERT_TYPE", "NOTIFICATION")
+        // intent.putExtra("SCHEDULED_TIME", calendar.timeInMillis)
+        intent.action = "Notification"
         // Create a PendingIntent for the AlarmReceiver
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(),
-            0,
+            getRequestCodeFromPreferences(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -228,24 +241,63 @@ class WeatherAlertFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestNotificationPermission(calendar: Calendar) {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_NOTIFICATION_PERMISSION)
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                REQUEST_CODE_NOTIFICATION_PERMISSION
+            )
         } else {
             showNotification(calendar)
         }
     }
 
     @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_CODE_NOTIFICATION_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(requireContext(), "Notification Permission Granted!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Notification Permission Granted!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
-                    Toast.makeText(requireContext(), "Notification Permission Denied!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Notification Permission Denied!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+        }
+    }
+
+    private fun getRequestCodeFromPreferences(): Int {
+        val sharedPrefs =
+            requireActivity().getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE)
+        return sharedPrefs.getInt(requestCodeKey, 0) // Default value is 0
+    }
+
+
+    private fun updateRequestCode() {
+
+        requestCode++
+
+        val sharedPrefs =
+            requireActivity().getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            putInt(requestCodeKey, requestCode)
+            apply() // Commit changes asynchronously
         }
     }
 }

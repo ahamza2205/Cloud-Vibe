@@ -29,6 +29,7 @@ import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
 import com.example.cloudvibe.databinding.FragmentHomeBinding
 import com.example.cloudvibe.activity.SharedViewModel
 import com.example.cloudvibe.model.database.toHourly
+import com.example.cloudvibe.utils.UnitConverter
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -195,9 +196,9 @@ class HomeFragment : Fragment() {
             tvCountry.text = " ${weatherEntity.country}"
             tvLocalTime.text = convertUnixTimeToTime(weatherEntity.timestamp)
             tvCondition.text = weatherEntity.description
-            textViewWindspeed.text = " ${convertedWindSpeed}$windSpeedUnit"
-            textViewHumidity.text = " ${weatherEntity.humidity}%"
-            textViewPressure.text = " ${weatherEntity.pressure}mBar"
+            textViewWindspeed.text = " ${UnitConverter.parseIntegerIntoArabic(convertedWindSpeed.toString())}$windSpeedUnit"
+            textViewHumidity.text = " ${UnitConverter.parseIntegerIntoArabic(weatherEntity.humidity.toString())}%"
+            textViewPressure.text = " ${UnitConverter.parseIntegerIntoArabic(weatherEntity.pressure.toString())}mBar"
             textViewSunrise.text = convertUnixTimeToTime(weatherEntity.sunrise)
             textViewSunset.text = convertUnixTimeToTime(weatherEntity.sunset)
         }
