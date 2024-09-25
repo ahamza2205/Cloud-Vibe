@@ -205,9 +205,7 @@ class WeatherAlertFragment : Fragment() {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
 
-        // Pass notification type and scheduled time to the receiver
-        // intent.putExtra("ALERT_TYPE", "NOTIFICATION")
-        // intent.putExtra("SCHEDULED_TIME", calendar.timeInMillis)
+
         intent.action = "Notification"
         // Create a PendingIntent for the AlarmReceiver
         val pendingIntent = PendingIntent.getBroadcast(

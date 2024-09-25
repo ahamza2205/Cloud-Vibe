@@ -26,6 +26,7 @@ import com.example.cloudvibe.R
 import com.example.cloudvibe.activity.MainActivity
 import com.example.cloudvibe.favorit.favdetil.LocationAdapter
 import com.example.cloudvibe.favorit.viewmodel.MapViewModel
+import com.example.cloudvibe.home.view.HomeFragment
 import com.example.cloudvibe.model.database.FavoriteCity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -42,6 +43,7 @@ class MapFragment : Fragment(), LocationListener {
     private lateinit var searchEditText: EditText
     private lateinit var cityAdapter: LocationAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var comeFrom : String
     private var selectedLocationMarker: Marker? = null
     private var currentLocationMarker: Marker? = null
 
@@ -53,7 +55,9 @@ class MapFragment : Fragment(), LocationListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        comeFrom = arguments?.getString("comeFrom").toString()
         return inflater.inflate(R.layout.fragment_map, container, false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -147,19 +151,42 @@ class MapFragment : Fragment(), LocationListener {
 
     // Show confirmation dialog to add city to favorites
     private fun showConfirmationDialog(cityName: String, geoPoint: GeoPoint) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Add to Favorites")
-            .setMessage("Do you want to add $cityName to your favorites?")
-            .setPositiveButton("OK") { _, _ ->
-                saveCityToFavorites(cityName, geoPoint.latitude, geoPoint.longitude)
+        if (comeFrom == "setting") {
+            AlertDialog.Builder(requireContext())
+                .setTitle("See Weather")
+                .setMessage("Do you want see the weather for $cityName ?")
+                .setPositiveButton("OK") { _, _ ->
+                    val bundle = Bundle().apply {
+                        putDouble("lat", geoPoint.latitude)
+                        putDouble("lon", geoPoint.longitude)
+                    }
 
-                val favoritFragment = FavoritFragment()
-                val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.fragment_container, favoritFragment)
-                fragmentTransaction.commit()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+                    val homeFragment = HomeFragment().apply {
+                        arguments = bundle
+                    }
+
+                    val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+                    fragmentTransaction.replace(R.id.fragment_container, homeFragment)
+                    fragmentTransaction.commit()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+
+        }else{
+            AlertDialog.Builder(requireContext())
+                .setTitle("Add to Favorites")
+                .setMessage("Do you want to add $cityName to your favorites?")
+                .setPositiveButton("OK") { _, _ ->
+                    saveCityToFavorites(cityName, geoPoint.latitude, geoPoint.longitude)
+
+                    val favoritFragment = FavoritFragment()
+                    val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+                    fragmentTransaction.replace(R.id.fragment_container, favoritFragment)
+                    fragmentTransaction.commit()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
     }
 
     // Save selected city to favorites

@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.compilercommon)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

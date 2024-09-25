@@ -1,6 +1,7 @@
 package com.example.cloudvibe.sharedpreferences
 
 import android.content.Context
+import android.util.Log
 import javax.inject.Inject
 
 class SharedPreferencesHelper @Inject constructor(context: Context) {
@@ -12,15 +13,24 @@ class SharedPreferencesHelper @Inject constructor(context: Context) {
             putFloat("latitude", latitude.toFloat())
             putFloat("longitude", longitude.toFloat())
             apply()
+
+            // Log the saved values
+            Log.d("SharedPreferences", "Location saved: Latitude = $latitude, Longitude = $longitude")
         }
     }
+
 
     fun getLocation(): Pair<Double, Double>? {
         val latitude = preferences.getFloat("latitude", Float.NaN)
         val longitude = preferences.getFloat("longitude", Float.NaN)
+
+        // Log the fetched values
+        Log.d("SharedPreferences", "Location fetched: Latitude = $latitude, Longitude = $longitude")
+
         return if (!latitude.isNaN() && !longitude.isNaN()) {
             Pair(latitude.toDouble(), longitude.toDouble())
         } else {
+            Log.e("SharedPreferences", "Location not found, returning null")
             null
         }
     }

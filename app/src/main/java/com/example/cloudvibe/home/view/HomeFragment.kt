@@ -12,12 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.motion.widget.Debug.getLocation
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -52,22 +54,33 @@ class HomeFragment : Fragment() {
     private lateinit var dailyForecastAdapter: DailyAdapter
     private val homeViewModel: HomeViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
     private lateinit var symbol: String
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        val latArg = arguments?.getDouble("lat")
+        val lonArg = arguments?.getDouble("lon")
+
+        if (latArg != null && lonArg != null && latArg != 0.0 && lonArg != 0.0) {
+            homeViewModel.fetchAndDisplayWeather(latArg, lonArg)
+            homeViewModel.fetchAndDisplayForecast(latArg, lonArg)
+        } else {
+            val location = homeViewModel.getLocation()
+            if (location != null) {
+                val latitude = location.first
+                val longitude = location.second
+                homeViewModel.fetchAndDisplayWeather(latitude, longitude)
+                homeViewModel.fetchAndDisplayForecast(latitude, longitude)
+            }
+        }
+
         homeViewModel.updateSettings()
         lifecycleScope.launch {
             homeViewModel.tempUnit.collect { unit ->
                 symbol = unit
-                Log.d("TAG1", "onCreateView: $symbol")
             }
         }
 
@@ -78,9 +91,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerViews()
-        setupLocationServices()
         setupObservers()
-        checkLocationPermission()
 
         sharedViewModel.selectedLocation.observe(viewLifecycleOwner) { location ->
             val (latitude, longitude) = location
@@ -107,34 +118,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupLocationServices() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-    }
-
-    private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
-        } else {
-            getLocation()
-        }
-    }
-
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
         homeViewModel.fetchAndDisplayWeather(latitude, longitude)
         homeViewModel.fetchAndDisplayForecast(latitude, longitude)
     }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLocation()
-            } else {
-                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupObservers() {
@@ -179,18 +166,15 @@ class HomeFragment : Fragment() {
 
     private fun displayWeatherData(weatherEntity: WeatherEntity) {
         val savedUnit = homeViewModel.getUnits()
-        val convertedTemp = convertTemperature(weatherEntity.temperature, savedUnit)
+        val convertedTemp = UnitConverter.convertTemperature(weatherEntity.temperature, savedUnit)
         val unitSymbol = when (savedUnit) {
             "°F" -> "°F"
             "°K" -> "°K"
             else -> "°C"
         }
-
         binding.tvTemperature.text = String.format("%.1f ", convertedTemp) + unitSymbol
-
         val windSpeedUnit = homeViewModel.getWindSpeedUnit()
-        val convertedWindSpeed = convertWindSpeed(weatherEntity.windSpeed, windSpeedUnit)
-
+        val convertedWindSpeed = UnitConverter.convertWindSpeed(weatherEntity.windSpeed, windSpeedUnit)
         with(binding) {
             tvLocation.text = weatherEntity.locationName
             tvCountry.text = " ${weatherEntity.country}"
@@ -204,23 +188,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun convertTemperature(tempInCelsius: Float, unit: String): Number {
-        return when (unit) {
-            "°K" -> tempInCelsius + 273.15
-            "°F" -> (tempInCelsius * 9 / 5) + 32
-            else -> tempInCelsius
-        }
-    }
-
-    private fun convertWindSpeed(speedInKmH: Double, unit: String): Double {
-        val convertedSpeed = when (unit) {
-            "m/s" -> speedInKmH / 3.6
-            "mph" -> speedInKmH * 0.621371
-            else -> speedInKmH
-        }
-        return (Math.round(convertedSpeed * 100.0) / 100.0)
-    }
-
     private fun convertUnixTimeToTime(unixTime: Long): String {
         val date = Date(unixTime * 1000)
         val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -228,44 +195,11 @@ class HomeFragment : Fragment() {
         return sdf.format(date)
     }
 
-
-
-
-
     private fun fetchWeatherDataByCityName(cityName: String) {
-        Log.d("HomeFragment", "Searching for city: $cityName")
         // Use the ViewModel to get coordinates and fetch weather
         homeViewModel.getCoordinatesFromCityName(cityName) { lat, lon ->
             fetchWeatherData(lat, lon)
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-        val locationRequest = LocationRequest.create().apply {
-            interval = 10000L
-            fastestInterval = 5000L
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location: Location in locationResult.locations) {
-                    val lat = location.latitude
-                    val lon = location.longitude
-                    homeViewModel.saveLocation(lat, lon)
-                    fetchWeatherData(lat, lon)
-                }
-            }
-        }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (::locationCallback.isInitialized) {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
-    }
 }

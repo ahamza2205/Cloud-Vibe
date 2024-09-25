@@ -20,13 +20,6 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("AlarmReceiver", "Alarm Received")
 
-        // Retrieve the scheduled time and type from the intent
-        val scheduledTime = intent?.getLongExtra("SCHEDULED_TIME", -1L) ?: -1L
-
-      //  val alertType = intent?.getStringExtra("ALERT_TYPE") ?: "ALARM"
-
-        // Check if the current time has reached or passed the scheduled time
-       // if (scheduledTime != -1L && System.currentTimeMillis() >= scheduledTime) {
             when (intent?.action) {
                 "Alarm" -> {
                     // Start the overlay service for alarm
@@ -40,9 +33,6 @@ class AlarmReceiver : BroadcastReceiver() {
                     Log.d("AlarmReceiver", "Notification Triggered")
                 }
             }
-       /* } else {
-            Log.d("AlarmReceiver", "Alarm or Notification is not yet due: $scheduledTime")
-        }*/
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

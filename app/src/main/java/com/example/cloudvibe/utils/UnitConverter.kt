@@ -93,4 +93,20 @@ object UnitConverter {
         }
     }
 
+    fun convertTemperature(tempInCelsius: Float, unit: String): Number {
+        return when (unit) {
+            "°K" -> tempInCelsius + 273.15
+            "°F" -> (tempInCelsius * 9 / 5) + 32
+            else -> tempInCelsius
+        }
+    }
+    fun convertWindSpeed(speedInKmH: Double, unit: String): Double {
+        val convertedSpeed = when (unit) {
+            "m/s" -> speedInKmH / 3.6
+            "mph" -> speedInKmH * 0.621371
+            else -> speedInKmH
+        }
+        return (Math.round(convertedSpeed * 100.0) / 100.0)
+    }
+
 }

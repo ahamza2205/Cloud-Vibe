@@ -49,6 +49,7 @@ googleGmsGoogleServices = "4.4.2"
 hiltCommon = "1.2.0"
 preference = "1.2.0"
 preferenceKtx = "1.2.1"
+compilercommon = "3.2.0-alpha11"
 
 [libraries]
 android = { module = "com.mapbox.maps:android", version.ref = "android" }
@@ -106,6 +107,7 @@ work-runtime-ktx-v271 = { module = "androidx.work:work-runtime-ktx", version.ref
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCommon" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
+androidx-compilercommon = { group = "androidx.databinding", name = "compilerCommon", version.ref = "compilercommon" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

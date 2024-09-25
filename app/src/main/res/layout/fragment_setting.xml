@@ -51,6 +51,7 @@
                         android:id="@+id/rb_gps"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
+                        android:buttonTint="@color/light_clouds"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
                         android:text="@string/GPS"
@@ -60,6 +61,7 @@
                     <RadioButton
                         android:id="@+id/rb_map"
                         android:layout_width="match_parent"
+                        android:buttonTint="@color/white"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -100,6 +102,7 @@
                     <RadioButton
                         android:id="@+id/rb_english"
                         android:layout_width="match_parent"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -110,6 +113,7 @@
                     <RadioButton
                         android:id="@+id/rb_arabic"
                         android:layout_width="match_parent"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -158,6 +162,7 @@
                     <RadioButton
                         android:id="@+id/rb_celsius"
                         android:layout_width="wrap_content"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -168,6 +173,7 @@
                     <RadioButton
                         android:id="@+id/rb_kelvin"
                         android:layout_width="wrap_content"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -178,6 +184,7 @@
                     <RadioButton
                         android:id="@+id/rb_fahrenheit"
                         android:layout_width="wrap_content"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -218,6 +225,7 @@
                     <RadioButton
                         android:id="@+id/rb_meter_sec"
                         android:layout_width="wrap_content"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -228,6 +236,7 @@
                     <RadioButton
                         android:id="@+id/rb_mile_hour"
                         android:layout_width="wrap_content"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -239,6 +248,7 @@
                     <RadioButton
                         android:id="@+id/rb_km_hour"
                         android:layout_width="wrap_content"
+                        android:buttonTint="@color/light_clouds"
                         android:layout_height="48dp"
                         android:fontFamily="@font/akatab_bold"
                         android:padding="8dp"
@@ -272,6 +282,7 @@
             <RadioButton
                 android:id="@+id/disabled"
                 android:layout_width="wrap_content"
+                android:buttonTint="@color/light_clouds"
                 android:layout_height="48dp"
                 android:fontFamily="@font/akatab_bold"
                 android:padding="8dp"
@@ -282,6 +293,7 @@
             <RadioButton
                 android:id="@+id/enabled"
                 android:layout_width="wrap_content"
+                android:buttonTint="@color/light_clouds"
                 android:layout_height="48dp"
                 android:fontFamily="@font/akatab_bold"
                 android:padding="8dp"

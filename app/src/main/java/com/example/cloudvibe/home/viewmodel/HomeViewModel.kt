@@ -71,6 +71,10 @@ class HomeViewModel @Inject constructor(
         _tempUnit.value = repository.getUnits()
         }
 
+    fun getLocation(): Pair<Double, Double>? {
+        return repository.getLocation()
+    }
+
 
     // Function to get coordinates (latitude, longitude) from city name
     fun getCoordinatesFromCityName(cityName: String, onCoordinatesFetched: (Double, Double) -> Unit) {
