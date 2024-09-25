@@ -196,9 +196,9 @@ class HomeFragment : Fragment() {
             tvCountry.text = " ${weatherEntity.country}"
             tvLocalTime.text = convertUnixTimeToTime(weatherEntity.timestamp)
             tvCondition.text = weatherEntity.description
-            textViewWindspeed.text = " ${UnitConverter.parseIntegerIntoArabic(convertedWindSpeed.toString())}$windSpeedUnit"
-            textViewHumidity.text = " ${UnitConverter.parseIntegerIntoArabic(weatherEntity.humidity.toString())}%"
-            textViewPressure.text = " ${UnitConverter.parseIntegerIntoArabic(weatherEntity.pressure.toString())}mBar"
+            textViewWindspeed.text = " ${UnitConverter.parseIntegerIntoArabic(convertedWindSpeed.toString(),requireContext())}$windSpeedUnit"
+            textViewHumidity.text = " ${UnitConverter.parseIntegerIntoArabic(weatherEntity.humidity.toString(),requireContext())}%"
+            textViewPressure.text = " ${UnitConverter.parseIntegerIntoArabic(weatherEntity.pressure.toString(),requireContext())}mBar"
             textViewSunrise.text = convertUnixTimeToTime(weatherEntity.sunrise)
             textViewSunset.text = convertUnixTimeToTime(weatherEntity.sunset)
         }

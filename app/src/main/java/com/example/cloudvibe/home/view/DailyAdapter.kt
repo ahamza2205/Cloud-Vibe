@@ -63,6 +63,7 @@ class DailyAdapter(
         val minDegree = mind.toInt()
         val icon = currentDaily.weather[0].icon
         val iconResource = getWeatherIconResource(icon)
+        val context = holder.itemView.context // Get the context from the ViewHolder
 
         holder.iconView.setImageResource(iconResource)
         val dayName = getFormattedDay(currentDaily.dt)
@@ -70,8 +71,8 @@ class DailyAdapter(
 
         holder.dayTV.text = dayName
         holder.stateTV.text = state
-        holder.maxDegreeTV.text = "${UnitConverter.parseIntegerIntoArabic(maxDegree.toString())}"
-        holder.minDegreeTV.text = "${UnitConverter.parseIntegerIntoArabic(minDegree.toString())} ${symbol}"
+        holder.maxDegreeTV.text = "${UnitConverter.parseIntegerIntoArabic(maxDegree.toString(),context)}"
+        holder.minDegreeTV.text = "${UnitConverter.parseIntegerIntoArabic(minDegree.toString(),context)} ${symbol}"
     }
 
 
