@@ -133,27 +133,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-        val locationRequest = LocationRequest.create().apply {
-            interval = 10000L
-            fastestInterval = 5000L
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location: Location in locationResult.locations) {
-                    val lat = location.latitude
-                    val lon = location.longitude
-                    homeViewModel.saveLocation(lat, lon)
-                    fetchWeatherData(lat, lon)
-                }
-            }
-        }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupObservers() {
@@ -247,44 +227,44 @@ class HomeFragment : Fragment() {
         return sdf.format(date)
     }
 
+
+
+
+
+    private fun fetchWeatherDataByCityName(cityName: String) {
+        Log.d("HomeFragment", "Searching for city: $cityName")
+        // Use the ViewModel to get coordinates and fetch weather
+        homeViewModel.getCoordinatesFromCityName(cityName) { lat, lon ->
+            fetchWeatherData(lat, lon)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLocation() {
+        val locationRequest = LocationRequest.create().apply {
+            interval = 10000L
+            fastestInterval = 5000L
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location: Location in locationResult.locations) {
+                    val lat = location.latitude
+                    val lon = location.longitude
+                    homeViewModel.saveLocation(lat, lon)
+                    fetchWeatherData(lat, lon)
+                }
+            }
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+    }
+
     override fun onStop() {
         super.onStop()
         if (::locationCallback.isInitialized) {
             fusedLocationClient.removeLocationUpdates(locationCallback)
         }
-    }
-
-    private fun fetchWeatherDataByCityName(cityName: String) {
-        Log.d("HomeFragment", "Searching for city: $cityName")
-        getCoordinatesFromCityName(cityName)
-    }
-
-    private fun getCoordinatesFromCityName(cityName: String) {
-        val url = "https://nominatim.openstreetmap.org/search?q=$cityName&format=json&addressdetails=1"
-
-        val client = OkHttpClient()
-        val request = okhttp3.Request.Builder()
-            .url(url)
-            .build()
-
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.e("HomeFragment", "Error fetching coordinates: ${e.message}")
-            }
-
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                if (response.isSuccessful) {
-                    val responseData = response.body?.string()
-                    val jsonArray = JSONArray(responseData)
-                    if (jsonArray.length() > 0) {
-                        val lat = jsonArray.getJSONObject(0).getDouble("lat")
-                        val lon = jsonArray.getJSONObject(0).getDouble("lon")
-                        fetchWeatherData(lat, lon)
-                    } else {
-                        Log.d("HomeFragment", "No results found for city: $cityName")
-                    }
-                }
-            }
-        })
     }
 }
