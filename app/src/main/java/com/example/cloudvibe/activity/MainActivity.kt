@@ -1,8 +1,5 @@
 package com.example.cloudvibe.activity
 
-import android.content.Context
-import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -15,12 +12,11 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
-import com.example.cloudvibe.alert.WeatherAlertFragment
+import com.example.cloudvibe.alert.view.WeatherAlertFragment
 import com.example.cloudvibe.favorit.view.FavoritFragment
 import com.example.cloudvibe.home.view.HomeFragment
 import com.example.cloudvibe.setting.view.SettingFragment
 import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
-import com.example.cloudvibe.utils.LocaleHelper.updateLocale
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale

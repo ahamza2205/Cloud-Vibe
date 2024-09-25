@@ -1,4 +1,4 @@
-package com.example.cloudvibe.alert
+package com.example.cloudvibe.alert.alarm
 
 
 import android.app.Notification

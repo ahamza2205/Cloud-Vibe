@@ -1,8 +1,7 @@
-package com.example.cloudvibe.alert
+package com.example.cloudvibe.alert.view
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -20,8 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.*
-
 
 
 import android.app.AlarmManager
@@ -33,12 +30,23 @@ import android.app.PendingIntent
 import android.app.TimePickerDialog
 
 import android.util.Log
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import com.example.cloudvibe.alert.alarm.AlarmReceiver
+import com.example.cloudvibe.alert.viewmodel.AlarmViewModel
+import com.example.cloudvibe.model.database.AlarmData
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 import java.util.Calendar
-
+@AndroidEntryPoint
 class WeatherAlertFragment : Fragment() {
     private val sharedPreferencesName = "alert_preferences"
     private val requestCodeKey = "request_code"
+    private lateinit var alarmAdapter: AlarmAdapter
+    private lateinit var recyclerView: RecyclerView
+    private val alarmViewModel : AlarmViewModel by viewModels()
     var requestCode: Int = 0
     private val notificationChannelId = "channel_id"
 
@@ -55,15 +63,30 @@ class WeatherAlertFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_weather_alert, container, false)
         requestCode = getRequestCodeFromPreferences()
         createNotificationChannel()
+        // Initialize RecyclerView and Adapter
+        recyclerView = view.findViewById(R.id.AlarmRecycelView)
+        alarmAdapter = AlarmAdapter()
+        recyclerView.adapter = alarmAdapter
+        // Collect the StateFlow from ViewModel
+        viewLifecycleOwner.lifecycleScope.launch {
+            alarmViewModel.alarmsFlow.collect { alarms ->
+                val currentTimeInMillis = System.currentTimeMillis()
+                // Filter the alarms whose time is greater than the current time
+                val newList = alarms.filter { alarm -> alarm.time > currentTimeInMillis }
+
+                // Update the adapter with the filtered list
+                alarmAdapter.submitList(newList)
+            }
+        }
+        // Delete old alarms
+        alarmViewModel.deleteOldAlarms()
 
         val fabAddAlert: FloatingActionButton = view.findViewById(R.id.fab_add_alert)
         fabAddAlert.setOnClickListener {
             showAlertDialog()
         }
-
         return view
     }
-
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -78,7 +101,6 @@ class WeatherAlertFragment : Fragment() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showAlertDialog() {
         val calendar = Calendar.getInstance()
@@ -145,19 +167,16 @@ class WeatherAlertFragment : Fragment() {
     private fun setAlarm(calendar: Calendar) {
         // Ensure the selected time is in the future
         if (calendar.before(Calendar.getInstance())) {
-            Toast.makeText(requireContext(), "Cannot set alarm for past time!", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(requireContext(), "Cannot set alarm for past time!", Toast.LENGTH_SHORT).show()
             return
         }
 
         val alarmTimeInMillis = calendar.timeInMillis
         Log.d("AlarmTime", "Setting alarm for: $alarmTimeInMillis (${calendar.time})")
 
+        // Set the alarm
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
-
-        // Pass the scheduled time
-        // intent.putExtra("SCHEDULED_TIME", alarmTimeInMillis)
         intent.action = "Alarm"
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(),
@@ -167,26 +186,23 @@ class WeatherAlertFragment : Fragment() {
         )
 
         try {
-            // Set the alarm
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 alarmTimeInMillis,
                 pendingIntent
             )
-
-            // Check Overlay Permission
             checkOverlayPermission()
+            // Save the alarm in the database
+            val alarmData = AlarmData(requestCode, alarmTimeInMillis)
+            alarmViewModel.insertAlarm(alarmData)
 
             Toast.makeText(requireContext(), "Alarm Set Successfully!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(
-                requireContext(),
-                "Failed to set alarm: ${e.message}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Failed to set alarm: ${e.message}", Toast.LENGTH_SHORT).show()
             Log.e("AlarmError", "Error setting alarm", e)
         }
     }
+
 
 
     private fun checkOverlayPermission() {
@@ -285,12 +301,8 @@ class WeatherAlertFragment : Fragment() {
             requireActivity().getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE)
         return sharedPrefs.getInt(requestCodeKey, 0) // Default value is 0
     }
-
-
     private fun updateRequestCode() {
-
         requestCode++
-
         val sharedPrefs =
             requireActivity().getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE)
         with(sharedPrefs.edit()) {

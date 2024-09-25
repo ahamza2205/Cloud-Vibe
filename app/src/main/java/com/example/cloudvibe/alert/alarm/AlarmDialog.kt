@@ -1,4 +1,4 @@
-package com.example.cloudvibe.alert
+package com.example.cloudvibe.alert.alarm
 
 import android.content.Intent
 import android.media.MediaPlayer

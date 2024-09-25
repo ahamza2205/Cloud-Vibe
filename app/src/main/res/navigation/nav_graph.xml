@@ -26,7 +26,7 @@
         tools:layout="@layout/fragment_setting"/>
     <fragment
         android:id="@+id/weatherAlertFragment"
-        android:name="com.example.cloudvibe.alert.WeatherAlertFragment"
+        android:name="com.example.cloudvibe.alert.view.WeatherAlertFragment"
         android:label="WeatherAlertFragment"
         tools:layout="@layout/fragment_weather_alert"/>
     <fragment

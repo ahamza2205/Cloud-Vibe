@@ -36,9 +36,9 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".alert.AlarmReceiver" android:exported="false" />
+        <receiver android:name=".alert.alarm.AlarmReceiver" android:exported="false" />
         <service
-            android:name=".alert.OverlayService"
+            android:name=".alert.alarm.OverlayService"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW"
             android:exported="false"/>
 

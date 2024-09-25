@@ -60,4 +60,13 @@ class SharedPreferencesHelper @Inject constructor(context: Context) {
     fun getWindSpeedUnit(): String? {
         return preferences.getString("wind_speed_unit", "km/h") // Default to km/h
     }
+
+    fun getLocationSetting(): String {
+        return preferences.getString("location_setting", "gps") ?: "gps" // Default to GPS
+    }
+
+    fun saveLocationSetting(setting: String) {
+        preferences.edit().putString("location_setting", setting).apply()
+    }
+
 }

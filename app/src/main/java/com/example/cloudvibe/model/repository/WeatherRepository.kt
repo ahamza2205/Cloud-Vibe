@@ -1,6 +1,7 @@
 package com.example.cloudvibe.model.repository
 
 import android.util.Log
+import com.example.cloudvibe.model.database.AlarmData
 import com.example.cloudvibe.model.database.FavoriteCity
 import com.example.cloudvibe.model.database.ForecastData
 import com.example.cloudvibe.model.database.WeatherDao
@@ -106,4 +107,19 @@ class WeatherRepository @Inject constructor(
     fun getWindSpeedUnit(): String? {
         return SharedPreferencesHelper.getWindSpeedUnit()
     }
+
+
+    // alarms table
+    suspend fun insertAlarm(alarmData: AlarmData) {
+        weatherDao.insertAlarm(alarmData)
+    }
+
+    fun getAllLocalAlarms(): Flow<List<AlarmData>> {
+        return weatherDao.getAllAlarms()
+    }
+
+    suspend fun deleteOldAlarms(currentTimeMillis: Long) {
+        weatherDao.deleteOldAlarms(currentTimeMillis)
+    }
+
 }

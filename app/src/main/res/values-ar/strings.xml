@@ -41,5 +41,6 @@
     <string name="Sunrise">الشروق</string>
     <string name="Sunset">الغروب</string>
     <string name="search_results">نتائج البحث</string>
+    <string name="timeralert">تنبيه المؤقت</string>
 
 </resources>

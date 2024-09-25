@@ -3,9 +3,7 @@ package com.example.cloudvibe.setting.view
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.health.connect.datatypes.ExerciseRoute
 import android.location.Location
-
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -15,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
 import com.example.cloudvibe.activity.MainActivity
@@ -116,7 +113,6 @@ class SettingFragment : Fragment() {
             }
         }
     }
-
     private fun startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -214,6 +210,18 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set GPS as default if no location setting has been chosen
+        val savedLocationSetting = sharedPreferencesHelper.getLocationSetting()
+        if (savedLocationSetting.isEmpty()) {
+            view.findViewById<RadioButton>(R.id.rb_gps).isChecked = true
+            sharedPreferencesHelper.saveLocationSetting("gps") // Save default as GPS
+        } else {
+            if (savedLocationSetting == "gps") {
+                view.findViewById<RadioButton>(R.id.rb_gps).isChecked = true
+            } else {
+                view.findViewById<RadioButton>(R.id.rb_map).isChecked = true
+            }
+        }
         // Retrieve saved units and set the corresponding RadioButton
         val savedUnits = sharedPreferencesHelper.getUnits()
         when (savedUnits) {

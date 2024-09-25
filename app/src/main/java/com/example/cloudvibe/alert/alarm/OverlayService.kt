@@ -1,4 +1,4 @@
-package com.example.cloudvibe.alert
+package com.example.cloudvibe.alert.alarm
 
 import android.app.Service
 import android.content.Context
@@ -14,7 +14,6 @@ import android.view.WindowManager
 import com.example.cloudvibe.R
 import com.example.cloudvibe.activity.MainActivity
 import com.example.cloudvibe.databinding.AlarmDialogBinding
-import com.example.cloudvibe.home.view.HomeFragment
 
 
 class OverlayService : Service() {

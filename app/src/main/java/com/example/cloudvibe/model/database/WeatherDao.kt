@@ -45,7 +45,22 @@ interface WeatherDao {
 
         @Delete
         suspend fun delete(favCity : FavoriteCity)
-    }
+
+
+    // Get all alarms
+    @Query("SELECT * FROM alarm_table")
+    fun getAllAlarms(): Flow<List<AlarmData>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAlarm(alarmData: AlarmData)
+
+    @Delete
+    suspend fun deleteAlarm(alarmData: AlarmData)
+
+    @Query("DELETE FROM alarm_table WHERE time < :currentTimeMillis")
+    suspend fun deleteOldAlarms(currentTimeMillis:Long)
+}
+
 
 
 
