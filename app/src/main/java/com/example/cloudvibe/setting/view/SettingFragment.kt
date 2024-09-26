@@ -36,6 +36,8 @@ class SettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
         // Check if location permission is granted at the beginning
         if (ActivityCompat.checkSelfPermission(
@@ -151,7 +153,7 @@ class SettingFragment : Fragment() {
 
         val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragment_container, mapFragment)
-        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.addToBackStack(null)  // Important to add this
         fragmentTransaction.commit()
     }
 
@@ -175,7 +177,6 @@ class SettingFragment : Fragment() {
             }
         }
     }
-
     // Function to handle Language setting (English/Arabic)
     private fun setupLanguageSetting(view: View) {
         val languageGroup = view.findViewById<RadioGroup>(R.id.radio_group_language)
@@ -192,7 +193,6 @@ class SettingFragment : Fragment() {
             }
         }
     }
-
     // Function to handle Wind setting (Meter/sec or Miles/hour)
     private fun setupWindSetting(view: View) {
         val windGroup = view.findViewById<RadioGroup>(R.id.radio_group_wind_speed)

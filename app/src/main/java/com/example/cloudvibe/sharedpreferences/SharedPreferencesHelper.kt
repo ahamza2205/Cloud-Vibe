@@ -18,8 +18,6 @@ class SharedPreferencesHelper @Inject constructor(context: Context) {
             Log.d("SharedPreferences", "Location saved: Latitude = $latitude, Longitude = $longitude")
         }
     }
-
-
     fun getLocation(): Pair<Double, Double>? {
         val latitude = preferences.getFloat("latitude", Float.NaN)
         val longitude = preferences.getFloat("longitude", Float.NaN)
@@ -34,37 +32,29 @@ class SharedPreferencesHelper @Inject constructor(context: Context) {
             null
         }
     }
-
     fun saveLanguage(languageCode: String) {
         val editor = preferences.edit()
         editor.putString("language", languageCode)
         editor.apply()
     }
-
     fun getLanguage(): String? {
         return preferences.getString("language", "en") // Default to English
     }
-
     fun saveUnits(unit: String) {
         preferences.edit().putString("unit", unit).apply()
     }
-
     fun getUnits(): String? {
         return preferences.getString("unit", "°C") // Default to Celsius (metric)
     }
-
     fun saveWindSpeedUnit(unit: String) {
         preferences.edit().putString("wind_speed_unit", unit).apply()
     }
-
     fun getWindSpeedUnit(): String? {
         return preferences.getString("wind_speed_unit", "km/h") // Default to km/h
     }
-
     fun getLocationSetting(): String {
         return preferences.getString("location_setting", "gps") ?: "gps" // Default to GPS
     }
-
     fun saveLocationSetting(setting: String) {
         preferences.edit().putString("location_setting", setting).apply()
     }

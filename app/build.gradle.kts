@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.compilercommon)
+    implementation(libs.androidx.ui.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -187,5 +188,6 @@ dependencies {
     implementation (libs.work.runtime.ktx.v271)
 
     implementation (libs.osmdroid.android.v6110)
+    implementation ("com.google.android.material:material:1.6.0")
 
 }

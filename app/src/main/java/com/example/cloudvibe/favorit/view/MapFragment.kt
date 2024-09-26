@@ -64,6 +64,18 @@ class MapFragment : Fragment(), LocationListener {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.supportActionBar?.hide()
 
+        // Handle the back button
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
+                requireActivity().supportFragmentManager.popBackStack()
+                true
+            } else {
+                false
+            }
+        }
+
         mapView = view.findViewById(R.id.map)
         searchEditText = view.findViewById(R.id.mainEditText)
         recyclerView = view.findViewById(R.id.recyclerView)

@@ -39,7 +39,6 @@
                     android:text="@string/location"
                     android:textColor="@color/white"
                     android:textSize="18dp" />
-
                 <RadioGroup
                     android:id="@+id/radio_group_location"
                     android:layout_width="match_parent"
@@ -51,23 +50,23 @@
                         android:id="@+id/rb_gps"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:buttonTint="@color/light_clouds"
-                        android:fontFamily="@font/akatab_bold"
-                        android:padding="8dp"
-                        android:text="@string/GPS"
-                        android:textColor="@color/light_clouds"
-                        android:textSize="18dp" />
+                        android:buttonTint="@drawable/radio_button_color"                     android:fontFamily="@font/akatab_bold"
+                    android:padding="8dp"
+                        android:checked="true"
+                    android:text="@string/GPS"
+                    android:textColor="@color/light_clouds"
+                    android:textSize="18sp" />
 
                     <RadioButton
                         android:id="@+id/rb_map"
                         android:layout_width="match_parent"
-                        android:buttonTint="@color/white"
-                        android:layout_height="48dp"
-                        android:fontFamily="@font/akatab_bold"
-                        android:padding="8dp"
-                        android:text="@string/Map"
-                        android:textColor="@color/light_clouds"
-                        android:textSize="18dp" />
+                        android:buttonTint="@color/light_clouds"
+                         android:layout_height="48dp"
+                         android:fontFamily="@font/akatab_bold"
+                         android:padding="8dp"
+                         android:text="@string/Map"
+                         android:textColor="@color/light_clouds"
+                         android:textSize="18sp" />
                 </RadioGroup>
             </LinearLayout>
 

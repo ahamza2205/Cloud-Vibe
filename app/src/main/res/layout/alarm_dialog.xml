@@ -1,68 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:lottie="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:layout_margin="16dp"
-    app:cardElevation="8dp"
+    android:layout_height="300dp"
+    android:layout_margin="32dp"
+    app:cardElevation="24dp"
     app:cardCornerRadius="16dp"
     app:cardBackgroundColor="@android:color/holo_blue_dark">
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:padding="24dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="24dp">
+<com.airbnb.lottie.LottieAnimationView
+    android:id="@+id/lottie_animation"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_gravity="center"
+    android:scaleType="fitCenter"
+    android:scaleX="1.5"
+    android:scaleY="1.5"
+    app:lottie_autoPlay="true"
+    app:lottie_loop="true"
+    app:lottie_rawRes="@raw/home" />
 
-        <!-- Alarm Title -->
-        <TextView
-            android:id="@+id/alarm_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="16dp"
-            android:text="@string/alarm"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+<!-- Alarm Title -->
+<TextView
+    android:id="@+id/alarm_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:paddingBottom="16dp"
+    android:text="@string/alarm"
+    android:textColor="@color/white"
+    android:textSize="24sp"
+    android:textStyle="bold" />
 
-        <!-- Alarm Message -->
-        <TextView
-            android:id="@+id/alarm_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="24dp"
-            android:text="@string/Itstimetochecktheweather"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
+<!-- Alarm Message -->
+<TextView
+    android:id="@+id/alarm_message"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:paddingBottom="24dp"
+    android:text="@string/Itstimetochecktheweather"
+    android:textColor="@color/white"
+    android:textSize="18sp" />
 
-        <!-- Buttons for Stop and Snooze -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp">
+<!-- Buttons for Stop and Snooze -->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_marginTop="16dp">
 
-            <Button
-                android:id="@+id/stop_button"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="#FFC107"
-                android:text="@string/Stop"
-                android:textColor="@android:color/white" />
+    <Button
+        android:id="@+id/stop_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#FFC107"
+        android:text="@string/Stop"
+        android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/snooze_button"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FF5722"
-                android:text="@string/GoToWeathr"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
+    <Button
+        android:id="@+id/snooze_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FF5722"
+        android:text="@string/GoToWeathr"
+        android:textColor="@android:color/white" />
+</LinearLayout>
 
-    </LinearLayout>
+</LinearLayout>
 
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>

@@ -3,6 +3,10 @@ package com.example.cloudvibe.utils
 import android.content.Context
 import com.example.cloudvibe.R
 import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 object UnitConverter {
     fun kelvinToCelsius(kelvin: Number): Float {
@@ -108,5 +112,12 @@ object UnitConverter {
         }
         return (Math.round(convertedSpeed * 100.0) / 100.0)
     }
+     fun convertUnixTimeToTime(unixTime: Long): String {
+        val date = Date(unixTime * 1000)
+        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        sdf.timeZone = TimeZone.getDefault()
+        return sdf.format(date)
+    }
+
 
 }

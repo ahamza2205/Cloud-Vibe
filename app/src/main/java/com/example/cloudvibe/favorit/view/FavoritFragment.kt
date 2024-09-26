@@ -46,7 +46,7 @@ class FavoritFragment : Fragment() {
             val mapFragment = MapFragment()
             val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
             fragmentTransaction.replace(R.id.fragment_container, mapFragment)
-            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.addToBackStack(null)  // Important to add this
             fragmentTransaction.commit()
         }
 

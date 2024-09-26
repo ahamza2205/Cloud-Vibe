@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         if (savedInstanceState == null) {
-            replaceFragment(HomeFragment())
+            replaceFragment(HomeFragment(), getString(R.string.home)) // Set title for HomeFragment
             navigationView.setCheckedItem(R.id.nav_home)
         }
 
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
      fun checkAndChangLocality()
     {
-        val languageCode = SharedPreferencesHelper(this).getLanguage()//ar
+        val languageCode = SharedPreferencesHelper(this).getLanguage()
         val locale = resources.configuration.locales[0]
 
         if(locale.language != languageCode)
