@@ -1,5 +1,7 @@
 package com.example.cloudvibe.activity
 
+import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -131,4 +133,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
            }
         }
+
 }

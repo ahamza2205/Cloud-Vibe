@@ -1,9 +1,8 @@
 package com.example.cloudvibe.home.view
-
-
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,11 +29,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-
     private lateinit var binding: FragmentHomeBinding
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyAdapter
@@ -46,10 +42,8 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-
         val latArg = arguments?.getDouble("lat")
         val lonArg = arguments?.getDouble("lon")
-
         if (latArg != null && lonArg != null && latArg != 0.0 && lonArg != 0.0) {
             homeViewModel.fetchAndDisplayWeather(latArg, lonArg)
             homeViewModel.fetchAndDisplayForecast(latArg, lonArg)
@@ -58,18 +52,17 @@ class HomeFragment : Fragment() {
             if (location != null) {
                 val latitude = location.first
                 val longitude = location.second
+                homeViewModel.updateLocation(latitude, longitude)
                 homeViewModel.fetchAndDisplayWeather(latitude, longitude)
                 homeViewModel.fetchAndDisplayForecast(latitude, longitude)
             }
         }
-
         homeViewModel.updateSettings()
         lifecycleScope.launch {
             homeViewModel.tempUnit.collect { unit ->
                 symbol = unit
             }
         }
-
         return binding.root
     }
 
@@ -89,7 +82,6 @@ class HomeFragment : Fragment() {
         }
 
     }
-
     private fun setupRecyclerViews() {
         hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), symbol, "km/h")
         binding.recyclerViewForecast.apply {
@@ -103,12 +95,10 @@ class HomeFragment : Fragment() {
             adapter = dailyForecastAdapter
         }
     }
-
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
         homeViewModel.fetchAndDisplayWeather(latitude, longitude)
         homeViewModel.fetchAndDisplayForecast(latitude, longitude)
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -163,9 +153,9 @@ class HomeFragment : Fragment() {
             tvCountry.text = " ${weatherEntity.country}"
             tvLocalTime.text = convertUnixTimeToTime(weatherEntity.timestamp)
             tvCondition.text = weatherEntity.description
-            textViewWindspeed.text = " ${parseIntegerIntoArabic(convertedWindSpeed.toString(),requireContext())}$windSpeedUnit"
-            textViewHumidity.text = " ${parseIntegerIntoArabic(weatherEntity.humidity.toString(),requireContext())}%"
-            textViewPressure.text = " ${parseIntegerIntoArabic(weatherEntity.pressure.toString(),requireContext())}mBar"
+            textViewWindspeed.text = "${parseIntegerIntoArabic(convertedWindSpeed.toString(),requireContext())}$windSpeedUnit"
+            textViewHumidity.text = "${parseIntegerIntoArabic(weatherEntity.humidity.toString(),requireContext())}%"
+            textViewPressure.text = "${parseIntegerIntoArabic(weatherEntity.pressure.toString(),requireContext())}mBar"
             textViewSunrise.text = convertUnixTimeToTime(weatherEntity.sunrise)
             textViewSunset.text = convertUnixTimeToTime(weatherEntity.sunset)
         }

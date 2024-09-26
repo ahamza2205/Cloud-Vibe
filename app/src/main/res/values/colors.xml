@@ -3,10 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#1B365D</color>
-
     <color name="white_transparent">#80FFFFFF</color> <!-- 50% transparent white -->
-
-
     <!-- New purple colors -->
     <color name="dark_blue_background">#0D1A29</color>
     <color name="mid_blue_sky">#1B365D</color>

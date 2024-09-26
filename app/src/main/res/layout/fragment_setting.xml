@@ -52,7 +52,6 @@
                         android:layout_height="48dp"
                         android:buttonTint="@drawable/radio_button_color"                     android:fontFamily="@font/akatab_bold"
                     android:padding="8dp"
-                        android:checked="true"
                     android:text="@string/GPS"
                     android:textColor="@color/light_clouds"
                     android:textSize="18sp" />
@@ -277,12 +276,17 @@
                 android:text="@string/Notifications"
                 android:textColor="@color/white"
                 android:textSize="18dp" />
-
+            <RadioGroup
+                android:id="@+id/radio_group_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp">
             <RadioButton
-                android:id="@+id/disabled"
+                android:id="@+id/rb_enable_notifications"
                 android:layout_width="wrap_content"
-                android:buttonTint="@color/light_clouds"
                 android:layout_height="48dp"
+                android:buttonTint="@color/light_clouds"
                 android:fontFamily="@font/akatab_bold"
                 android:padding="8dp"
                 android:text="@string/Enable"
@@ -290,15 +294,17 @@
                 android:textSize="16dp" />
 
             <RadioButton
-                android:id="@+id/enabled"
+                android:id="@+id/rb_disable_notifications"
                 android:layout_width="wrap_content"
-                android:buttonTint="@color/light_clouds"
                 android:layout_height="48dp"
+                android:buttonTint="@color/light_clouds"
                 android:fontFamily="@font/akatab_bold"
                 android:padding="8dp"
                 android:text="@string/Disable"
                 android:textColor="@color/light_clouds"
                 android:textSize="16dp" />
+            </RadioGroup>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

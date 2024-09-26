@@ -32,14 +32,19 @@ class HomeViewModel @Inject constructor(
     private val _tempUnit = MutableStateFlow<String>("")
     val tempUnit: StateFlow<String> get()=_tempUnit
 
+
+
     fun fetchAndDisplayWeather(lat: Double, lon: Double ) {
         val language = repository.getLanguage() ?: "en"
         viewModelScope.launch {
             try {
-                repository.getWeatherFromApiAndSaveToLocal(lat, lon,  language, ).collect { weatherList ->
+                Log.d("HomeViewModel", "Fetching weather data for lat: $lat, lon: $lon")
+                repository.getWeatherFromApiAndSaveToLocal(lat, lon,  language).collect { weatherList ->
+                    Log.d("HomeViewModel", "Weather data received: $weatherList")
                     _savedWeather.value = weatherList
                 }
             } catch (e: Exception) {
+                Log.e("HomeViewModel", "Error fetching weather data: ${e.message}")
                 _savedWeather.value = emptyList()
             }
         }
@@ -48,41 +53,49 @@ class HomeViewModel @Inject constructor(
     fun fetchAndDisplayForecast(lat: Double, lon: Double ) {
         val language = repository.getLanguage() ?: "en"
         viewModelScope.launch {
+            Log.d("HomeViewModel", "Fetching forecast data for lat: $lat, lon: $lon")
             repository.fetchForecastFromApiAndSave(lat, lon, language).collect { forecastList ->
+                Log.d("HomeViewModel", "Forecast data received: $forecastList")
                 _savedForecast.value = forecastList
             }
         }
     }
 
-    // Get saved location from repository
     fun saveLocation(latitude: Double, longitude: Double) {
+        Log.d("HomeViewModel", "Saving location lat: $latitude, lon: $longitude")
         repository.saveLocation(latitude, longitude)
     }
+
     fun getUnits(): String {
-        return repository.getUnits() ?: "metric"
+        val units = repository.getUnits() ?: "metric"
+        Log.d("HomeViewModel", "Temperature unit: $units")
+        return units
     }
 
     fun getWindSpeedUnit(): String {
-        return repository.getWindSpeedUnit() ?: "km/h"
+        val windSpeedUnit = repository.getWindSpeedUnit() ?: "km/h"
+        Log.d("HomeViewModel", "Wind speed unit: $windSpeedUnit")
+        return windSpeedUnit
     }
-
 
     fun updateSettings() {
         _tempUnit.value = repository.getUnits()
-        }
-
-    fun getLocation(): Pair<Double, Double>? {
-        return repository.getLocation()
+        Log.d("HomeViewModel", "Temperature unit updated to: ${_tempUnit.value}")
     }
 
+    fun getLocation(): Pair<Double, Double>? {
+        val location = repository.getLocation()
+        Log.d("HomeViewModel", "Retrieved location: $location")
+        return location
+    }
 
-    // Function to get coordinates (latitude, longitude) from city name
     fun getCoordinatesFromCityName(cityName: String, onCoordinatesFetched: (Double, Double) -> Unit) {
         val url = "https://nominatim.openstreetmap.org/search?q=$cityName&format=json&addressdetails=1"
         val client = OkHttpClient()
         val request = Request.Builder().url(url).build()
 
-        // Asynchronous network request to fetch coordinates
+        Log.d("HomeViewModel", "Fetching coordinates for city: $cityName")
+
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
                 Log.e("HomeViewModel", "Error fetching coordinates: ${e.message}")
@@ -91,17 +104,29 @@ class HomeViewModel @Inject constructor(
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                 if (response.isSuccessful) {
                     val responseData = response.body?.string()
+                    Log.d("HomeViewModel", "Response data for coordinates: $responseData")
                     val jsonArray = JSONArray(responseData)
                     if (jsonArray.length() > 0) {
                         val lat = jsonArray.getJSONObject(0).getDouble("lat")
                         val lon = jsonArray.getJSONObject(0).getDouble("lon")
-                        // Pass the coordinates back using the callback
+                        Log.d("HomeViewModel", "Coordinates for city $cityName: lat: $lat, lon: $lon")
                         onCoordinatesFetched(lat, lon)
                     } else {
                         Log.d("HomeViewModel", "No results found for city: $cityName")
                     }
+                } else {
+                    Log.e("HomeViewModel", "Failed to fetch coordinates for city: $cityName")
                 }
             }
         })
     }
+
+    fun updateLocation(latitude: Double, longitude: Double) {
+        saveLocationToSharedPreferences(latitude, longitude)
+    }
+
+    private fun saveLocationToSharedPreferences(latitude: Double, longitude: Double) {
+        repository.saveLocation(latitude, longitude)
+    }
 }
+
