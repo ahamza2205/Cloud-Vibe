@@ -1,5 +1,6 @@
 package com.example.cloudvibe.repository
 
+import com.example.cloudvibe.model.database.FavoriteCity
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.network.WeatherApiService
 import com.example.cloudvibe.model.repository.WeatherRepository
@@ -9,11 +10,14 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import retrofit2.Response
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
@@ -33,6 +37,8 @@ class WeatherRepositoryTest {
         weatherRepository = WeatherRepository(weatherApiService, weatherDao, sharedPreferencesHelper)
     }
 
+
+    // ---------------------------Weather tests here----------------------------------------
     @Test
     fun `test fetch weather and save to local successfully`() {
         runTest {
@@ -73,8 +79,22 @@ class WeatherRepositoryTest {
             assertEquals(listOf(fakeWeatherEntity), savedWeatherFlow.flatten())
         }
     }
+ // test for empty data here
+    @Test
+    fun `test get saved weather returns empty data`() {
+        runTest {
+            // Arrange
+            `when`(weatherDao.getAllWeather()).thenReturn(flowOf(emptyList()))
 
+            // Act
+            val savedWeatherFlow = weatherRepository.getSavedWeather().toList()
 
+            // Assert
+            assertTrue(savedWeatherFlow.flatten().isEmpty())
+        }
+    }
+
+    // ----------------------------Forecast tests here----------------------------------------
     @Test
     fun `test fetch forecast and save to local successfully`() {
         runTest {
@@ -112,6 +132,49 @@ class WeatherRepositoryTest {
         }
     }
 
+     // -------------------------------------------Favorite city tests here---------------------------------------------
+@Test
+fun `test insert favorite city`() {
+    runTest {
+        // Arrange
+        val favoriteCity = FavoriteCity(cityName = "Cairo", latitude = 30.0, longitude = 31.0)
+
+        // Act
+        weatherRepository.insertFavoriteCity(favoriteCity)
+
+        // Assert
+        verify(weatherDao).insert(favoriteCity)
+    }
+}
+
+    @Test
+    fun `test get all favorite cities returns expected data`() {
+        runTest {
+            // Arrange
+            val favoriteCity = FavoriteCity(cityName = "Cairo", latitude = 30.0, longitude = 31.0)
+            `when`(weatherDao.getAllLocal()).thenReturn(flowOf(listOf(favoriteCity)))
+
+            // Act
+            val favoriteCitiesFlow = weatherRepository.getAllFavoriteCities().toList()
+
+            // Assert
+            assertEquals(listOf(favoriteCity), favoriteCitiesFlow.first())
+        }
+    }
+
+    @Test
+    fun `test delete favorite city`() {
+        runTest {
+            // Arrange
+            val favoriteCity = FavoriteCity(cityName = "Cairo", latitude = 30.0, longitude = 31.0)
+
+            // Act
+            weatherRepository.deleteFavoriteCity(favoriteCity)
+
+            // Assert
+            verify(weatherDao).delete(favoriteCity)
+        }
+    }
 
 }
 
