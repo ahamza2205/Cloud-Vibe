@@ -8,7 +8,6 @@ import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.network.WeatherApiService
 import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesManager
 import com.example.cloudvibe.utils.WeatherMapper.mapForecastResponseToData
 import com.example.cloudvibe.utils.WeatherMapper.mapWeatherResponseToEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,6 +15,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,38 +24,31 @@ import javax.inject.Singleton
 class WeatherRepository @Inject constructor(
     private val weatherApiService: WeatherApiService,
     private val weatherDao: WeatherDao,
-    private val  SharedPreferencesHelper: SharedPreferencesHelper
+    private val  sharedPreferencesHelper: SharedPreferencesHelper
 ) {
-    private val TAG = "WeatherRepository"
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun getWeatherFromApiAndSaveToLocal(
         lat: Double, lon: Double, language: String
     ): Flow<List<WeatherEntity>> {
         return flow {
             try {
-
                 val response = weatherApiService.getCurrentWeather(lat, lon, language)
 
                 val weatherEntity = mapWeatherResponseToEntity(response)
-
                 weatherDao.deleteAllWeather()
-
                 weatherDao.insertWeather(weatherEntity)
-            } catch (e: Exception) {
-            }
 
-            emitAll(getSavedWeather())
-        }.flatMapLatest {
-            getSavedWeather()
+                // Emit the newly saved weather
+                emitAll(getSavedWeather())
+            } catch (e: Exception) {
+                emit(emptyList())
+            }
         }
     }
 
-    private fun getSavedWeather(): Flow<List<WeatherEntity>> {
-        return weatherDao.getAllWeather()
+     fun getSavedWeather(): Flow<List<WeatherEntity>> {
+        return weatherDao.getAllWeather() ?: flowOf(emptyList())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun fetchForecastFromApiAndSave(lat: Double, lon: Double,  language: String): Flow<List<ForecastData>> {
         return flow {
             try {
@@ -67,13 +61,11 @@ class WeatherRepository @Inject constructor(
             } catch (e: Exception) {
             }
             emitAll(getSavedForecast())
-        }.flatMapLatest {
-            getSavedForecast()
         }
     }
 
-    private fun getSavedForecast(): Flow<List<ForecastData>> {
-        return weatherDao.getAllForecasts()
+     fun getSavedForecast(): Flow<List<ForecastData>> {
+        return weatherDao.getAllForecasts() ?: flowOf(emptyList())
     }
 
     // Favorite cities
@@ -90,22 +82,22 @@ class WeatherRepository @Inject constructor(
 
     // sheared preferences
     fun getLocation(): Pair<Double, Double>? {
-        return SharedPreferencesHelper.getLocation()
+        return sharedPreferencesHelper.getLocation()
     }
 
     fun saveLocation(latitude: Double, longitude: Double) {
-        SharedPreferencesHelper.saveLocation(latitude, longitude)
+        sharedPreferencesHelper.saveLocation(latitude, longitude)
     }
     fun getLanguage(): String? {
-        return SharedPreferencesHelper.getLanguage()
+        return sharedPreferencesHelper.getLanguage()
     }
 
     fun getUnits(): String {
-        return SharedPreferencesHelper.getUnits().toString()
+        return sharedPreferencesHelper.getUnits().toString()
     }
 
     fun getWindSpeedUnit(): String? {
-        return SharedPreferencesHelper.getWindSpeedUnit()
+        return sharedPreferencesHelper.getWindSpeedUnit()
     }
 
 

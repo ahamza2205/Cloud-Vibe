@@ -1,6 +1,5 @@
 package com.example.cloudvibe.model.network.data
 
-import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.cloudvibe.model.database.Converters

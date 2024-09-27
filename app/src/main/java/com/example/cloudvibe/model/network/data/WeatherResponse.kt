@@ -1,12 +1,9 @@
 package com.example.cloudvibe.model.network.data
 
-
-import androidx.room.Entity
 import androidx.room.TypeConverters
 import com.example.cloudvibe.model.database.Converters
 import com.google.gson.annotations.SerializedName
 @TypeConverters(Converters::class)
-@Entity
 data class WeatherResponse(
     val coord: Coord,
     val weather: List<Weather>,
@@ -24,13 +21,11 @@ data class WeatherResponse(
     @SerializedName("hourly") val hourly: List<Hourly>?
 )
 @TypeConverters(Converters::class)
-@Entity
 data class Coord(
     val lon: Double,
     val lat: Double
 )
 @TypeConverters(Converters::class)
-@Entity
 data class Weather(
     val id: Int,
     val main: String,
@@ -39,9 +34,9 @@ data class Weather(
 
 ) {
     constructor(icon: String, description: String) : this(  id = 0, main = "", description = description, icon = icon)
+    constructor(id: Int, main: String, description: String) : this(  id = id, main = main, description = description, icon = "")
 }
 @TypeConverters(Converters::class)
-@Entity
 data class Main(
     val temp: Float,
     val feels_like: Double,
@@ -51,26 +46,28 @@ data class Main(
     val humidity: Int,
     val sea_level: Int,
     val grnd_level: Int
-)
+) {
+    constructor(temp_max: Float, temp_min: Float) : this( temp = 0f, feels_like = 0.0, temp_min = temp_min, temp_max = temp_max, pressure = 0, humidity = 0, sea_level = 0, grnd_level = 0)
+}
+
 @TypeConverters(Converters::class)
-@Entity
 data class Wind(
     val speed: Double,
     val deg: Int,
     val gust: Double
-)
+) {
+    constructor(speed: Double, deg: Int) : this(speed = speed, deg = deg, gust = 0.0)
+}
+
 @TypeConverters(Converters::class)
-@Entity
 data class Rain(
     @SerializedName("1h") val oneHour: Double?
 )
 @TypeConverters(Converters::class)
-@Entity
 data class Clouds(
     val all: Int
 )
 @TypeConverters(Converters::class)
-@Entity
 data class Sys(
     val type: Int,
     val id: Int,
@@ -79,4 +76,6 @@ data class Sys(
     val sunset: Long,
     val pod: String // Example field, adjust based on your actual Sys class structure
 
-)
+) {
+    constructor(type: Int, id: Int, country: String, sunrise: Long, sunset: Long) : this(    type = type, id = id, country = country, sunrise = sunrise, sunset = sunset, pod = "")
+}
