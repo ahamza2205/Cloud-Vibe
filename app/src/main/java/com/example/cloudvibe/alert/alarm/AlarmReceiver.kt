@@ -43,9 +43,9 @@ class AlarmReceiver : BroadcastReceiver() {
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val notification = Notification.Builder(context, "channel_id")
-            .setContentTitle("Alert")
+            .setContentTitle("Weather Notification")
             .setContentText("It's time to check the weather!")
-            .setSmallIcon(R.drawable.alarms)
+            .setSmallIcon(R.drawable.appstore)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()

@@ -121,17 +121,17 @@ class FavoritWeatherFragment : Fragment() {
             favoritViewModel.weatherState.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
+                        binding.lottieAnimationView.visibility = View.VISIBLE
                         binding.weatherDataLayout.visibility = View.GONE // إخفاء بيانات الطقس
                     }
                     is ApiState.Success -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.lottieAnimationView.visibility = View.GONE
                         binding.weatherDataLayout.visibility = View.VISIBLE
                         if (state.data.isNotEmpty()) {
                             displayWeatherData(state.data[0])
                         }                    }
                     is ApiState.Error -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.lottieAnimationView.visibility = View.GONE
                         Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                     }
                 }

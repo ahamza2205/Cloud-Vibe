@@ -119,4 +119,8 @@ class WeatherRepository @Inject constructor(
         weatherDao.deleteOldAlarms(currentTimeMillis)
     }
 
+    override suspend fun deleteAlarm(alarmData: AlarmData) {
+        weatherDao.deleteAlarm(alarmData)
+    }
+
 }

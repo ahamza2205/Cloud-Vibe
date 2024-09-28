@@ -21,7 +21,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="10dp"
-            android:contentDescription="hfcb"
+            android:contentDescription="abs"
             android:src="@drawable/alarms"
             android:layout_gravity="start" />
 
@@ -32,11 +32,21 @@
             android:layout_weight="1"
             android:text="@string/timeralert"
             android:textColor="@color/blue"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
 
-
-
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete_city"
+            android:src="@drawable/baseline_delete_24"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"/>
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

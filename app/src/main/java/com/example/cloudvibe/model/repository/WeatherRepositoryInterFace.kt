@@ -8,4 +8,5 @@ interface WeatherRepositoryInterFace {
     fun getAllLocalAlarms(): Flow<List<AlarmData>>
     suspend fun insertAlarm(alarmData: AlarmData)
     suspend fun deleteOldAlarms(currentTimeMillis: Long)
+    suspend fun deleteAlarm(alarmData: AlarmData)
 }

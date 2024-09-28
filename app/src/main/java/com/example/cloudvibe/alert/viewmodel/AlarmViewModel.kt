@@ -53,5 +53,10 @@ class AlarmViewModel @Inject constructor(
             Log.d("AlarmViewModel", "Deleted alarms older than $currentTimeMillis")
         }
     }
+    fun deleteAlarm(alarmData: AlarmData) {
+        viewModelScope.launch {
+            weatherRepository.deleteAlarm(alarmData)
+        }
+    }
 
 }

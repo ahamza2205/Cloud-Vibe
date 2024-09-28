@@ -323,13 +323,16 @@
     </androidx.core.widget.NestedScrollView>
 
     <!-- ProgressBar at the top of everything -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:indeterminate="true"
-        android:background="@drawable/rounded_corners"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_gravity="center"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:background="@drawable/rounded_recycler_view"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loadingsun" />
+
 
 </FrameLayout>

@@ -107,18 +107,18 @@ class HomeFragment : Fragment() {
                 when (state) {
                     is ApiState.Loading -> {
                         Log.d("ProgressBar", "Loading state triggered")
-                        binding.progressBar.visibility = View.VISIBLE
+                        binding.lottieAnimationView.visibility = View.VISIBLE
                         binding.weatherDataLayout.visibility = View.GONE
                     }
                     is ApiState.Success -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.lottieAnimationView.visibility = View.GONE
                         binding.weatherDataLayout.visibility = View.VISIBLE
                         if (state.data.isNotEmpty()) {
                             displayWeatherData(state.data[0])
                         }
                     }
                     is ApiState.Error -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.lottieAnimationView.visibility = View.GONE
                         Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                     }
                 }

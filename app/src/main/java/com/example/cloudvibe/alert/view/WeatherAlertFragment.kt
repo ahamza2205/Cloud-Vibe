@@ -54,7 +54,6 @@ class WeatherAlertFragment : Fragment() {
         private const val REQUEST_CODE_OVERLAY_PERMISSION = 1001
         private const val REQUEST_CODE_NOTIFICATION_PERMISSION = 1002
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,30 +62,56 @@ class WeatherAlertFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_weather_alert, container, false)
         requestCode = getRequestCodeFromPreferences()
         createNotificationChannel()
-        // Initialize RecyclerView and Adapter
+
         recyclerView = view.findViewById(R.id.AlarmRecycelView)
-        alarmAdapter = AlarmAdapter()
+
+       // cancel alarm if it exists in the database
+        alarmAdapter = AlarmAdapter { alarmData ->
+            cancelAlarm(requireContext(), alarmData.requestCode)
+            alarmViewModel.deleteAlarm(alarmData)
+        }
+
+
         recyclerView.adapter = alarmAdapter
-        // Collect the StateFlow from ViewModel
+
         viewLifecycleOwner.lifecycleScope.launch {
             alarmViewModel.alarmsFlow.collect { alarms ->
                 val currentTimeInMillis = System.currentTimeMillis()
-                // Filter the alarms whose time is greater than the current time
                 val newList = alarms.filter { alarm -> alarm.time > currentTimeInMillis }
-
-                // Update the adapter with the filtered list
                 alarmAdapter.submitList(newList)
             }
         }
-        // Delete old alarms
         alarmViewModel.deleteOldAlarms()
 
         val fabAddAlert: FloatingActionButton = view.findViewById(R.id.fab_add_alert)
         fabAddAlert.setOnClickListener {
             showAlertDialog()
         }
+
         return view
     }
+
+    private fun cancelAlarm(context: Context, requestCode: Int) {
+        Log.d("CancelAlarm", "Attempting to cancel alarm with requestCode: $requestCode")
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+
+        val pendingIntentToCancel = PendingIntent.getBroadcast(
+            context,
+            requestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        alarmManager.cancel(pendingIntentToCancel)
+        pendingIntentToCancel.cancel()
+
+        Log.d("AlarmCancellation", "Alarm cancelled for request code: $requestCode")
+    }
+
+
+
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -179,8 +204,8 @@ class WeatherAlertFragment : Fragment() {
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
         intent.action = "Alarm"
         val pendingIntent = PendingIntent.getBroadcast(
-            requireContext(),
-            getRequestCodeFromPreferences(),
+            context,
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -202,9 +227,6 @@ class WeatherAlertFragment : Fragment() {
             Log.e("AlarmError", "Error setting alarm", e)
         }
     }
-
-
-
     private fun checkOverlayPermission() {
         if (!Settings.canDrawOverlays(requireContext())) {
             // Request the Overlay permission

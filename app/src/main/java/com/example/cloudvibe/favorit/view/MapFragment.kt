@@ -32,6 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -63,7 +64,13 @@ class MapFragment : Fragment(), LocationListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.supportActionBar?.hide()
-
+        mapView = view.findViewById(R.id.map)
+        mapView?.let {
+            it.setTileSource(TileSourceFactory.MAPNIK)
+            it.setMultiTouchControls(true)
+        } ?: run {
+            Toast.makeText(requireContext(), "Map failed to load", Toast.LENGTH_SHORT).show()
+        }
         // Handle the back button
         view.isFocusableInTouchMode = true
         view.requestFocus()
@@ -235,7 +242,7 @@ class MapFragment : Fragment(), LocationListener {
 
             currentLocationMarker = Marker(map).apply {
                 position = currentPoint
-                icon = resources.getDrawable(R.drawable.ic_location_marker) // Your current location marker icon
+                icon = resources.getDrawable(R.drawable.ic_location_marker)
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             }
 
@@ -243,9 +250,11 @@ class MapFragment : Fragment(), LocationListener {
             map.controller.setCenter(currentPoint)
             map.invalidate()
         } ?: run {
-            Toast.makeText(requireContext(), "Map is not initialized", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "MapView is null", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     override fun onResume() {
         super.onResume()
