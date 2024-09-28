@@ -40,7 +40,7 @@ android:padding="24dp">
 
 <!-- Alarm Message -->
 <TextView
-    android:id="@+id/alarm_message"
+    android:id="@+id/net_message"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"

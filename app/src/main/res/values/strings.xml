@@ -63,5 +63,8 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="Kmh">km/h</string>
+    <string name="internet">Please check your internet connection and try again.</string>
+    <string name="Retry">Retry</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

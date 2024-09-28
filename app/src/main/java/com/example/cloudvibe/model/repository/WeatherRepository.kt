@@ -34,13 +34,13 @@ class WeatherRepository @Inject constructor(
                 val response = weatherApiService.getCurrentWeather(lat, lon, language)
 
                 val weatherEntity = mapWeatherResponseToEntity(response)
-                weatherDao.deleteAllWeather()
-                weatherDao.insertWeather(weatherEntity)
+                weatherDao.deleteAllWeather()  // مسح البيانات القديمة
+                weatherDao.insertWeather(weatherEntity)  // إضافة البيانات الجديدة
 
-                // Emit the newly saved weather
                 emitAll(getSavedWeather())
             } catch (e: Exception) {
-                emit(emptyList())
+                Timber.e("Error fetching weather data: ${e.localizedMessage}")
+                emitAll(getSavedWeather())
             }
         }
     }
@@ -49,18 +49,24 @@ class WeatherRepository @Inject constructor(
         return weatherDao.getAllWeather() ?: flowOf(emptyList())
     }
 
-    suspend fun fetchForecastFromApiAndSave(lat: Double, lon: Double,  language: String): Flow<List<ForecastData>> {
+    suspend fun fetchForecastFromApiAndSave(
+        lat: Double, lon: Double, language: String
+    ): Flow<List<ForecastData>> {
         return flow {
             try {
-                val response = weatherApiService.getForecastWeather(lat, lon,  language)
+                val response = weatherApiService.getForecastWeather(lat, lon, language)
                 response.body()?.let { forecastResponse ->
                     val forecastList = mapForecastResponseToData(forecastResponse)
-                    weatherDao.clearForecasts()
-                    weatherDao.insertForecast(forecastList)
+                    weatherDao.clearForecasts()  // مسح البيانات القديمة
+                    weatherDao.insertForecast(forecastList)  // إضافة البيانات الجديدة
                 }
+
+                // Emit the newly saved forecast data
+                emitAll(getSavedForecast())
             } catch (e: Exception) {
+                Timber.e("Error fetching forecast data: ${e.localizedMessage}")
+                emitAll(getSavedForecast())
             }
-            emitAll(getSavedForecast())
         }
     }
 

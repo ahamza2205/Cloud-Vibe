@@ -31,17 +31,16 @@ import java.util.logging.Logger
 class HomeViewModelTest {
 
     @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val repository: WeatherRepository = Mockito.mock(WeatherRepository::class.java)
-    private val logger: Logger = Mockito.mock(Logger::class.java) // Mock the logger
+    private val logger: Logger = Mockito.mock(Logger::class.java)
     private lateinit var homeViewModel: HomeViewModel
 
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setUp() {
-        homeViewModel = HomeViewModel(repository, logger) // Pass the mocked logger
+        homeViewModel = HomeViewModel(repository, logger)
         Dispatchers.setMain(testDispatcher)
     }
 

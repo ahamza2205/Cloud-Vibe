@@ -31,6 +31,12 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import android.app.AlertDialog
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.widget.Button
+import com.example.cloudvibe.R
 
 @AndroidEntryPoint
 class FavoritWeatherFragment : Fragment() {
@@ -64,15 +70,22 @@ class FavoritWeatherFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(sharedViewModel.detailsLocation.value != null)
-        {
-            Log.d("hamza", "onViewCreated: ${sharedViewModel.detailsLocation.value}")
-            fetchWeatherData(sharedViewModel.detailsLocation.value!!.latitude, sharedViewModel.detailsLocation.value!!.longitude)
-        }
 
-        setupRecyclerViews()
-        setupObservers()
+        if (!isInternetAvailable()) {
+            showCustomNoInternetDialog()
+            return
+        } else {
+            // Continue with data fetching if internet is available
+            if (sharedViewModel.detailsLocation.value != null) {
+                fetchWeatherData(sharedViewModel.detailsLocation.value!!.latitude, sharedViewModel.detailsLocation.value!!.longitude)
+            }
+
+            setupRecyclerViews()
+            setupObservers()
+        }
     }
+
+
 
     private fun setupRecyclerViews() {
         hourlyForecastAdapter = HourlyForecastAdapter(mutableListOf(), symbol, "km/h")
@@ -190,6 +203,52 @@ class FavoritWeatherFragment : Fragment() {
         val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
         sdf.timeZone = TimeZone.getDefault()
         return sdf.format(date)
+    }
+
+
+
+    // Check if internet is available
+    private fun isInternetAvailable(): Boolean {
+        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+        return when {
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            else -> false
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun showCustomNoInternetDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_no_internet, null)
+
+        val customDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val retryButton = dialogView.findViewById<Button>(R.id.dialogRetryButton)
+        val cancelButton = dialogView.findViewById<Button>(R.id.dialogButton)
+
+        retryButton.setOnClickListener {
+            customDialog.dismiss()
+            if (isInternetAvailable()) {
+                if (sharedViewModel.detailsLocation.value != null) {
+                    fetchWeatherData(sharedViewModel.detailsLocation.value!!.latitude, sharedViewModel.detailsLocation.value!!.longitude)
+                }
+                setupRecyclerViews()
+                setupObservers()
+            } else {
+                showCustomNoInternetDialog()
+            }
+        }
+
+        cancelButton.setOnClickListener {
+            customDialog.dismiss()
+        }
+
+        customDialog.show()
     }
 
 }
