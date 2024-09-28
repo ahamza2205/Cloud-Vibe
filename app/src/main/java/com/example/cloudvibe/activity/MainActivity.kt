@@ -18,7 +18,7 @@ import com.example.cloudvibe.alert.view.WeatherAlertFragment
 import com.example.cloudvibe.favorit.view.FavoritFragment
 import com.example.cloudvibe.home.view.HomeFragment
 import com.example.cloudvibe.setting.view.SettingFragment
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.model.sharedpreferences.SharedPreferencesHelper
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale

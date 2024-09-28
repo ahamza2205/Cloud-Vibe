@@ -89,7 +89,6 @@ class AlarmViewModelTest {
         }
     }
 
-
     // Test case for inserting an existing alarm into the database (should not insert)
     @Test
     fun `test inserting existing alarm`() = runTest {
@@ -99,20 +98,17 @@ class AlarmViewModelTest {
 
         verify(repository, times(1)).insertAlarm(existingAlarm)
     }
-
     @Test
     fun `test delete old alarms behavior`() = runTest {
         val currentTime = System.currentTimeMillis()
         `when`(repository.getAllLocalAlarms()).thenReturn(flowOf(listOf(
-            AlarmData(1, currentTime - 1000), // إنذار قديم
-            AlarmData(2, currentTime + 1000)   // إنذار جديد
+            AlarmData(1, currentTime - 1000),
+            AlarmData(2, currentTime + 1000)
         )))
 
         viewModel.deleteOldAlarms()
 
         verify(repository).deleteOldAlarms(anyLong())
     }
-
-
 }
 

@@ -6,7 +6,7 @@ import com.example.cloudvibe.model.database.FavoriteCity
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.network.WeatherApiService
 import com.example.cloudvibe.model.repository.WeatherRepository
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.model.sharedpreferences.SharedPreferencesHelper
 import com.example.cloudvibe.utils.WeatherMapper
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList

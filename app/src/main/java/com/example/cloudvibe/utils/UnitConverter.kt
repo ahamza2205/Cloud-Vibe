@@ -2,7 +2,7 @@ package com.example.cloudvibe.utils
 
 import android.content.Context
 import com.example.cloudvibe.R
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.model.sharedpreferences.SharedPreferencesHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

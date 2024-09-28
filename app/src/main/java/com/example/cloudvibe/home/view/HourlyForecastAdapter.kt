@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.cloudvibe.R
 import com.example.cloudvibe.model.network.data.Hourly
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.model.sharedpreferences.SharedPreferencesHelper
 import com.example.cloudvibe.utils.UnitConverter
 import com.example.cloudvibe.utils.UnitConverter.getWeatherIconResource
 import java.util.Calendar

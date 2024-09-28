@@ -1,6 +1,5 @@
 package com.example.cloudvibe.viewmodel
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cloudvibe.home.viewmodel.HomeViewModel
 import com.example.cloudvibe.model.database.ForecastData
@@ -14,7 +13,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.Dispatchers
-
 import kotlinx.coroutines.launch
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -32,7 +30,6 @@ import java.util.logging.Logger
 class HomeViewModelTest {
 
     @get:Rule
-
     private val repository: WeatherRepository = Mockito.mock(WeatherRepository::class.java)
     private val logger: Logger = Mockito.mock(Logger::class.java)
     private lateinit var homeViewModel: HomeViewModel
@@ -50,11 +47,10 @@ class HomeViewModelTest {
         Dispatchers.resetMain()
     }
 
-
 // ------------------------------------- weather data test cases -------------------------------------
 @Test
 fun testFetchAndDisplayWeather() = runTest {
-    // Scenario 1: Successful response
+    //  Successful response
     val dummyWeatherList = listOf(
         WeatherEntity(1, "Alexandria", "EG", "1727521961", 27.74f, "clear sky", 4.75, 55, 1727521961, 1011, 1727495515, 1727538554)
     )
@@ -65,16 +61,16 @@ fun testFetchAndDisplayWeather() = runTest {
     testDispatcher.scheduler.advanceUntilIdle()
     assertEquals(ApiState.Success(dummyWeatherList), homeViewModel.weatherState.value)
 
-    // Scenario 2: Empty response (returns an empty list)
+    //  Empty response
     whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
         .thenReturn(flowOf(emptyList()))
 
-    // Check if it's an empty list state when the repository returns an empty list
+    // empty list
     homeViewModel.fetchAndDisplayWeather(31.255884, 29.987537)
     testDispatcher.scheduler.advanceUntilIdle()
     assertEquals(ApiState.Success(emptyList<WeatherEntity>()), homeViewModel.weatherState.value) // Expect empty list
 
-    // Scenario 3: An error occurs when fetching the weather data
+    //  An error occurs
     whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
         .thenThrow(RuntimeException("Network error"))
 
@@ -82,8 +78,6 @@ fun testFetchAndDisplayWeather() = runTest {
     testDispatcher.scheduler.advanceUntilIdle()
     assertTrue(homeViewModel.weatherState.value is ApiState.Error) // Check if it's an error state
 }
-
-
 
    // ------------------------------- Forecast Data -------------------------------
     @Test
@@ -121,7 +115,7 @@ fun testFetchAndDisplayWeather() = runTest {
         // Advance the coroutine dispatcher
         testDispatcher.scheduler.advanceUntilIdle()
 
-        job.cancel() // Cancel the job once we have our expected value
+        job.cancel()
     }
 
     // Test if the list is empty when the repository returns an empty list

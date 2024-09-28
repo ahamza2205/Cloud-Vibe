@@ -1,8 +1,13 @@
 package com.example.cloudvibe.alert.viewmodel
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cloudvibe.alert.alarm.AlarmReceiver
 import com.example.cloudvibe.model.database.AlarmData
 import com.example.cloudvibe.model.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,10 +58,30 @@ class AlarmViewModel @Inject constructor(
             Log.d("AlarmViewModel", "Deleted alarms older than $currentTimeMillis")
         }
     }
-    fun deleteAlarm(alarmData: AlarmData) {
+    fun deleteAlarm(context: Context, alarmData: AlarmData) {
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmRequestCode = alarmData.requestCode
+
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            action = "Alarm"
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            alarmRequestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        alarmManager.cancel(pendingIntent)
+
+        pendingIntent.cancel()
+
         viewModelScope.launch {
             weatherRepository.deleteAlarm(alarmData)
         }
+
     }
 
 }

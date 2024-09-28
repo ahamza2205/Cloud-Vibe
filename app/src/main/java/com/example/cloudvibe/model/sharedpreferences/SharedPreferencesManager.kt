@@ -1,4 +1,4 @@
-package com.example.cloudvibe.sharedpreferences
+package com.example.cloudvibe.model.sharedpreferences
 
 interface SharedPreferencesManager {
     fun getLocation(): Pair<Double, Double>?

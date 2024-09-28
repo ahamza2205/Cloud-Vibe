@@ -66,12 +66,9 @@ class WeatherAlertFragment : Fragment() {
         recyclerView = view.findViewById(R.id.AlarmRecycelView)
 
        // cancel alarm if it exists in the database
-        alarmAdapter = AlarmAdapter { alarmData ->
-            cancelAlarm(requireContext(), alarmData.requestCode)
-            alarmViewModel.deleteAlarm(alarmData)
+        alarmAdapter = AlarmAdapter {
+            alarmViewModel.deleteAlarm(requireContext(),it)
         }
-
-
         recyclerView.adapter = alarmAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -90,27 +87,6 @@ class WeatherAlertFragment : Fragment() {
 
         return view
     }
-
-    private fun cancelAlarm(context: Context, requestCode: Int) {
-        Log.d("CancelAlarm", "Attempting to cancel alarm with requestCode: $requestCode")
-
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-
-        val pendingIntentToCancel = PendingIntent.getBroadcast(
-            context,
-            requestCode,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        alarmManager.cancel(pendingIntentToCancel)
-        pendingIntentToCancel.cancel()
-
-        Log.d("AlarmCancellation", "Alarm cancelled for request code: $requestCode")
-    }
-
-
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -196,9 +172,9 @@ class WeatherAlertFragment : Fragment() {
             return
         }
 
+        val requestCode = getRequestCodeFromPreferences()
         val alarmTimeInMillis = calendar.timeInMillis
         Log.d("AlarmTime", "Setting alarm for: $alarmTimeInMillis (${calendar.time})")
-
         // Set the alarm
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
@@ -224,7 +200,6 @@ class WeatherAlertFragment : Fragment() {
             Toast.makeText(requireContext(), "Alarm Set Successfully!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "Failed to set alarm: ${e.message}", Toast.LENGTH_SHORT).show()
-            Log.e("AlarmError", "Error setting alarm", e)
         }
     }
     private fun checkOverlayPermission() {

@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment
 import com.example.cloudvibe.R
 import com.example.cloudvibe.activity.MainActivity
 import com.example.cloudvibe.favorit.view.MapFragment
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.model.sharedpreferences.SharedPreferencesHelper
 import com.google.android.gms.location.*
 
 class SettingFragment : Fragment() {

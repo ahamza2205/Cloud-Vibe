@@ -7,7 +7,7 @@ import com.example.cloudvibe.model.database.ForecastData
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.network.WeatherApiService
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.model.sharedpreferences.SharedPreferencesHelper
 import com.example.cloudvibe.utils.WeatherMapper.mapForecastResponseToData
 import com.example.cloudvibe.utils.WeatherMapper.mapWeatherResponseToEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi

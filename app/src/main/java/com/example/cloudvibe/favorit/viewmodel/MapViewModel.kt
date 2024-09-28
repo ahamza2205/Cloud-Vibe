@@ -9,7 +9,9 @@ import com.example.cloudvibe.model.database.FavoriteCity
 import com.example.cloudvibe.model.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -30,14 +32,15 @@ class MapViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
-    private val _cityList = MutableStateFlow<List<String>>(emptyList())  // قائمة المدن
-    val cityList: StateFlow<List<String>> get() = _cityList.asStateFlow()
+    private val _cityList = MutableSharedFlow<List<String>>(replay = 1)
 
-    private val _filteredCityList = MutableStateFlow<List<String>>(emptyList())  // قائمة المدن المفلترة
-    val filteredCityList: StateFlow<List<String>> get() = _filteredCityList.asStateFlow()
+    private val _filteredCityList = MutableSharedFlow<List<String>>(replay = 1)
+    val filteredCityList: SharedFlow<List<String>> get() = _filteredCityList
 
     init {
-        _cityList.value = listOf(
+        viewModelScope.launch {
+            _cityList.emit(
+                listOf(
             "Cairo, Egypt", "Alexandria, Egypt", "Giza, Egypt", "Port Said, Egypt",
             "Suez, Egypt", "Luxor, Egypt", "Aswan, Egypt", "Asyut, Egypt",
             "Beheira, Egypt", "Beni Suef, Egypt", "Dakahlia, Egypt", "Damietta, Egypt",
@@ -100,9 +103,9 @@ class MapViewModel @Inject constructor(
             "الدار البيضاء، المغرب", "الرباط، المغرب", "فاس، المغرب", "الجزائر، الجزائر",
             "تونس، تونس", "طرابلس، ليبيا", "الخرطوم، السودان", "نيروبي، كينيا",
             "لاغوس، نيجيريا", "أكرا، غانا", "داكار، السنغال", "أبوجا، نيجيريا"
-        )
-
-
+                )
+            )
+        }
     }
 
     fun filterCityList(query: String) {
@@ -110,9 +113,9 @@ class MapViewModel @Inject constructor(
             val filteredList = if (query.isEmpty()) {
                 emptyList()
             } else {
-                _cityList.value.filter {
+                _cityList.replayCache.firstOrNull()?.filter {
                     it.contains(query, ignoreCase = true)
-                }
+                } ?: emptyList()
             }
             _filteredCityList.emit(filteredList)
         }

@@ -5,7 +5,7 @@ import com.example.cloudvibe.model.repository.WeatherRepository
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.database.WeatherDatabase
 import com.example.cloudvibe.model.network.WeatherApiService
-import com.example.cloudvibe.sharedpreferences.SharedPreferencesHelper
+import com.example.cloudvibe.model.sharedpreferences.SharedPreferencesHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

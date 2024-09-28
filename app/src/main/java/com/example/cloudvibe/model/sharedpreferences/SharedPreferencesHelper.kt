@@ -1,4 +1,4 @@
-package com.example.cloudvibe.sharedpreferences
+package com.example.cloudvibe.model.sharedpreferences
 
 import android.content.Context
 import android.util.Log
@@ -19,18 +19,19 @@ class SharedPreferencesHelper @Inject constructor(context: Context) {
         }
     }
     fun getLocation(): Pair<Double, Double>? {
-        val sharedPreferences = context.getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
-        val latitude = sharedPreferences.getFloat("latitude", Float.MIN_VALUE)
-        val longitude = sharedPreferences.getFloat("longitude", Float.MIN_VALUE)
+        val latitude = preferences.getFloat("latitude", Float.NaN)
+        val longitude = preferences.getFloat("longitude", Float.NaN)
 
-        // Check if location values exist
-        return if (latitude != Float.MIN_VALUE && longitude != Float.MIN_VALUE) {
+        // Log the fetched values
+        Log.d("SharedPreferences", "Location fetched: Latitude = $latitude, Longitude = $longitude")
+
+        return if (!latitude.isNaN() && !longitude.isNaN()) {
             Pair(latitude.toDouble(), longitude.toDouble())
         } else {
-            null // No saved location
+            Log.e("SharedPreferences", "Location not found, returning null")
+            null
         }
     }
-
     fun saveLanguage(languageCode: String) {
         val editor = preferences.edit()
         editor.putString("language", languageCode)

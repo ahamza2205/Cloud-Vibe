@@ -122,7 +122,7 @@ class FavoritWeatherFragment : Fragment() {
                 when (state) {
                     is ApiState.Loading -> {
                         binding.lottieAnimationView.visibility = View.VISIBLE
-                        binding.weatherDataLayout.visibility = View.GONE // إخفاء بيانات الطقس
+                        binding.weatherDataLayout.visibility = View.GONE
                     }
                     is ApiState.Success -> {
                         binding.lottieAnimationView.visibility = View.GONE

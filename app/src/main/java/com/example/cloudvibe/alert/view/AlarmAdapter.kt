@@ -20,8 +20,7 @@ class AlarmDiff:DiffUtil.ItemCallback<AlarmData>(){
         return oldItem == newItem
     }
 }
-
-class AlarmAdapter(private val onDeleteClick: (AlarmData) -> Unit)
+class AlarmAdapter( val onDeleteClick: ( alarmData: AlarmData) -> Unit)
     : ListAdapter<AlarmData, AlarmAdapter.AlarmViewHolder>(AlarmDiff()) {
 
     class AlarmViewHolder(val binding: AlarmItemBinding) : ViewHolder(binding.root)
