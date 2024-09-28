@@ -51,6 +51,7 @@ preference = "1.2.0"
 preferenceKtx = "1.2.1"
 compilercommon = "3.2.0-alpha11"
 uiAndroid = "1.7.2"
+junitKtx = "1.2.1"
 
 [libraries]
 android = { module = "com.mapbox.maps:android", version.ref = "android" }
@@ -110,6 +111,7 @@ androidx-preference = { group = "androidx.preference", name = "preference", vers
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 androidx-compilercommon = { group = "androidx.databinding", name = "compilerCommon", version.ref = "compilercommon" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

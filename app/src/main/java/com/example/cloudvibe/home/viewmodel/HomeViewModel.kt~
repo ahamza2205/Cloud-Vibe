@@ -23,7 +23,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val repository: WeatherRepository
 ) : ViewModel() {
-    constructor(repository: WeatherRepository?, logger: Logger?) : this( repository!!)
 
     private val _savedWeather = MutableStateFlow<List<WeatherEntity>>(emptyList())
     val savedWeather: StateFlow<List<WeatherEntity>> = _savedWeather
@@ -33,8 +32,6 @@ class HomeViewModel @Inject constructor(
 
     private val _tempUnit = MutableStateFlow<String>("")
     val tempUnit: StateFlow<String> get()=_tempUnit
-
-
 
     fun fetchAndDisplayWeather(lat: Double, lon: Double ) {
         val language = repository.getLanguage() ?: "en"

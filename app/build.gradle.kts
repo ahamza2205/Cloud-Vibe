@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.compilercommon)
     implementation(libs.androidx.ui.android)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -192,30 +193,44 @@ dependencies {
 
     // test libraries for testing with junit and kotlinx-coroutines-test and mockito-core
 
-    // JUnit testing framework
+// JUnit testing framework
     testImplementation("junit:junit:4.13.2")
 
-    // Coroutines test for handling suspend functions
+// Coroutines test for handling suspend functions
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
-    // Hilt for dependency injection in testing
+// Hilt for dependency injection in testing
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
 
-    // Mockito for mocking objects
+// Mockito for mocking objects
     testImplementation("org.mockito:mockito-core:3.12.4")
 
-    // MockK for mocking Kotlin classes
+// MockK for mocking Kotlin classes
     testImplementation("io.mockk:mockk:1.12.0")
 
-    // Truth for better assertions
+// Truth for better assertions
     testImplementation("com.google.truth:truth:1.1.3")
 
-    // Robolectric for testing
-    testImplementation ("org.robolectric:robolectric:4.9")
-    implementation ("com.jakewharton.timber:timber:5.0.1")
-    testImplementation ("org.mockito:mockito-inline:4.6.1")
+// Robolectric for testing
+    testImplementation("org.robolectric:robolectric:4.9.2")
 
+// Timber for logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
 
+// Mockito-inline for mockito extensions
+    testImplementation("org.mockito:mockito-inline:4.6.1")
+
+// Core testing library for LiveData and ViewModel tests
+    testImplementation("androidx.arch.core:core-testing:2.1.0")
+
+// Mockito-Kotlin for better Kotlin integration with Mockito
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+    // Turbine for testing
+    testImplementation ("app.cash.turbine:turbine:0.6.1")
+    // For mocking dependencies
+    testImplementation ("org.mockito:mockito-core:4.5.1")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
 }

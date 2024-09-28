@@ -1,5 +1,7 @@
 package com.example.cloudvibe.repository
 
+import com.example.cloudvibe.FakeWeatherData
+import com.example.cloudvibe.model.database.AlarmData
 import com.example.cloudvibe.model.database.FavoriteCity
 import com.example.cloudvibe.model.database.WeatherDao
 import com.example.cloudvibe.model.network.WeatherApiService
@@ -15,9 +17,7 @@ import retrofit2.Response
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
-import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
@@ -175,6 +175,168 @@ fun `test insert favorite city`() {
             verify(weatherDao).delete(favoriteCity)
         }
     }
+    // ------------------------------ shared preferences tests here -----------------------------------
 
+// test for null location
+    @Test
+    fun `test get location returns null when no location is saved`() {
+        runTest {
+            // Arrange
+            `when`(sharedPreferencesHelper.getLocation()).thenReturn(null)
+
+            // Act
+            val location = weatherRepository.getLocation()
+
+            // Assert
+            verify(sharedPreferencesHelper).getLocation()
+            assertEquals(null, location)
+        }
+    }
+   // test
+    @Test
+    fun `test save and retrieve new language`() {
+        runTest {
+            // Arrange
+            val newLanguage = "fr"
+            `when`(sharedPreferencesHelper.getLanguage()).thenReturn(newLanguage)
+
+            // Act
+            val retrievedLanguage = weatherRepository.getLanguage()
+
+            // Assert
+            verify(sharedPreferencesHelper).getLanguage()
+            assertEquals(newLanguage, retrievedLanguage)
+        }
+    }
+
+    @Test
+    fun `test retrieve language from shared preferences`() {
+        runTest {
+            // Arrange
+            val language = "en"
+            // Mock the getLanguage behavior
+            `when`(sharedPreferencesHelper.getLanguage()).thenReturn(language)
+
+            // Act
+            val retrievedLanguage = weatherRepository.getLanguage()
+
+            // Assert
+            verify(sharedPreferencesHelper).getLanguage()
+            assertEquals(language, retrievedLanguage)
+        }
+    }
+
+    @Test
+    fun `test retrieve units from shared preferences`() {
+        runTest {
+            // Arrange
+            val units = "metric"
+            // Mock the getUnits behavior
+            `when`(sharedPreferencesHelper.getUnits()).thenReturn(units)
+
+            // Act
+            val retrievedUnits = weatherRepository.getUnits()
+
+            // Assert
+            verify(sharedPreferencesHelper).getUnits()
+            assertEquals(units, retrievedUnits)
+        }
+    }
+
+    @Test
+    fun `test retrieve wind speed unit from shared preferences`() {
+        runTest {
+            // Arrange
+            val windSpeedUnit = "km/h"
+            // Mock the getWindSpeedUnit behavior
+            `when`(sharedPreferencesHelper.getWindSpeedUnit()).thenReturn(windSpeedUnit)
+
+            // Act
+            val retrievedWindSpeedUnit = weatherRepository.getWindSpeedUnit()
+
+            // Assert
+            verify(sharedPreferencesHelper).getWindSpeedUnit()
+            assertEquals(windSpeedUnit, retrievedWindSpeedUnit)
+        }
+    }
+
+    @Test
+    fun `test get language returns default when no language is saved`() {
+        runTest {
+            // Arrange
+            `when`(sharedPreferencesHelper.getLanguage()).thenReturn(null)
+
+            // Act
+            val language = weatherRepository.getLanguage()
+
+            // Assert
+            verify(sharedPreferencesHelper).getLanguage()
+            assertEquals(null, language)
+        }
+    }
+ // -------------------------------------- Alarm tests here---------------------------------------------
+
+    @Test
+    fun `test insert alarm successfully`() = runTest {
+        // Arrange
+        val alarmData = AlarmData(requestCode = 101, time = 1632994981000L)
+
+        // Act
+        weatherRepository.insertAlarm(alarmData)
+
+        // Assert
+        verify(weatherDao).insertAlarm(alarmData)
+    }
+    @Test
+    fun `test get all local alarms successfully`() = runTest {
+        // Arrange
+        val alarmDataList = listOf(
+            AlarmData(requestCode = 101, time = 1632994981000L),
+            AlarmData(requestCode = 102, time = 1632999999000L)
+        )
+
+        `when`(weatherDao.getAllAlarms()).thenReturn(flowOf(alarmDataList))
+
+        // Act
+        val alarmsFlow = weatherRepository.getAllLocalAlarms().toList()
+
+        // Assert
+        assertEquals(alarmDataList, alarmsFlow.first())
+    }
+
+    @Test
+    fun `test delete old alarms successfully`() = runTest {
+        // Arrange
+        val currentTimeMillis = System.currentTimeMillis()
+
+        // Act
+        weatherRepository.deleteOldAlarms(currentTimeMillis)
+
+        // Assert
+        verify(weatherDao).deleteOldAlarms(currentTimeMillis)
+    }
+
+    @Test
+    fun `test get all local alarms returns empty list`() = runTest {
+        // Arrange
+        `when`(weatherDao.getAllAlarms()).thenReturn(flowOf(emptyList()))
+
+        // Act
+        val alarmsFlow = weatherRepository.getAllLocalAlarms().toList()
+
+        // Assert
+        assertTrue(alarmsFlow.first().isEmpty())
+    }
+    @Test
+    fun `test delete old alarms when no old alarms exist`() = runTest {
+        // Arrange
+        val currentTimeMillis = System.currentTimeMillis()
+
+        // Act
+        weatherRepository.deleteOldAlarms(currentTimeMillis)
+
+        // Assert
+        verify(weatherDao).deleteOldAlarms(currentTimeMillis)
+    }
 }
 

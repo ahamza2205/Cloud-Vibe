@@ -25,7 +25,7 @@ class WeatherRepository @Inject constructor(
     private val weatherApiService: WeatherApiService,
     private val weatherDao: WeatherDao,
     private val  sharedPreferencesHelper: SharedPreferencesHelper
-) {
+) : WeatherRepositoryInterFace {
     suspend fun getWeatherFromApiAndSaveToLocal(
         lat: Double, lon: Double, language: String
     ): Flow<List<WeatherEntity>> {
@@ -100,17 +100,16 @@ class WeatherRepository @Inject constructor(
         return sharedPreferencesHelper.getWindSpeedUnit()
     }
 
-
     // alarms table
-    suspend fun insertAlarm(alarmData: AlarmData) {
-        weatherDao.insertAlarm(alarmData)
-    }
-
-    fun getAllLocalAlarms(): Flow<List<AlarmData>> {
+    override fun getAllLocalAlarms(): Flow<List<AlarmData>> {
         return weatherDao.getAllAlarms()
     }
 
-    suspend fun deleteOldAlarms(currentTimeMillis: Long) {
+    override suspend fun insertAlarm(alarmData: AlarmData) {
+        weatherDao.insertAlarm(alarmData)
+    }
+
+    override suspend fun deleteOldAlarms(currentTimeMillis: Long) {
         weatherDao.deleteOldAlarms(currentTimeMillis)
     }
 
