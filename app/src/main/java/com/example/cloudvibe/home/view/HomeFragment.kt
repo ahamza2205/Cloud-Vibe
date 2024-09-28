@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -102,11 +103,23 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.savedWeather.collect { weatherList ->
-                    if (weatherList.isNotEmpty()) {
-                        val weather = weatherList.last()
-                        displayWeatherData(weather)
+            homeViewModel.weatherState.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        Log.d("ProgressBar", "Loading state triggered")
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.weatherDataLayout.visibility = View.GONE
+                    }
+                    is ApiState.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        binding.weatherDataLayout.visibility = View.VISIBLE
+                        if (state.data.isNotEmpty()) {
+                            displayWeatherData(state.data[0])
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

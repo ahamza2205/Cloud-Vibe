@@ -36,7 +36,9 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.widget.Button
+import android.widget.Toast
 import com.example.cloudvibe.R
+import com.example.cloudvibe.home.view.ApiState
 
 @AndroidEntryPoint
 class FavoritWeatherFragment : Fragment() {
@@ -116,11 +118,21 @@ class FavoritWeatherFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                favoritViewModel.savedWeather.collect { weatherList ->
-                    if (weatherList.isNotEmpty()) {
-                        val weather = weatherList.last()
-                        displayWeatherData(weather)
+            favoritViewModel.weatherState.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.weatherDataLayout.visibility = View.GONE // إخفاء بيانات الطقس
+                    }
+                    is ApiState.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        binding.weatherDataLayout.visibility = View.VISIBLE
+                        if (state.data.isNotEmpty()) {
+                            displayWeatherData(state.data[0])
+                        }                    }
+                    is ApiState.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

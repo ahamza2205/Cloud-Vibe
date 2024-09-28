@@ -1,10 +1,9 @@
 package com.example.cloudvibe.home.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cloudvibe.home.view.ApiState
 import com.example.cloudvibe.model.database.ForecastData
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.repository.WeatherRepository
@@ -25,8 +24,8 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     constructor(repository: WeatherRepository?, logger: Logger?) : this( repository!!)
 
-    private val _savedWeather = MutableStateFlow<List<WeatherEntity>>(emptyList())
-    val savedWeather: StateFlow<List<WeatherEntity>> = _savedWeather
+    private val _weatherState = MutableStateFlow<ApiState<List<WeatherEntity>>>(ApiState.Loading)
+    val weatherState: StateFlow<ApiState<List<WeatherEntity>>> = _weatherState
 
     private val _savedForecast = MutableStateFlow<List<ForecastData>>(emptyList())
     val savedForecast: StateFlow<List<ForecastData>> = _savedForecast
@@ -36,18 +35,16 @@ class HomeViewModel @Inject constructor(
 
 
 
-    fun fetchAndDisplayWeather(lat: Double, lon: Double ) {
+    fun fetchAndDisplayWeather(lat: Double, lon: Double) {
         val language = repository.getLanguage() ?: "en"
         viewModelScope.launch {
             try {
-                Log.d("HomeViewModel", "Fetching weather data for lat: $lat, lon: $lon")
-                repository.getWeatherFromApiAndSaveToLocal(lat, lon,  language).collect { weatherList ->
-                    Log.d("HomeViewModel", "Weather data received: $weatherList")
-                    _savedWeather.value = weatherList
+                _weatherState.value = ApiState.Loading
+                repository.getWeatherFromApiAndSaveToLocal(lat, lon, language).collect { weatherList ->
+                    _weatherState.value = ApiState.Success(weatherList)
                 }
             } catch (e: Exception) {
-                Log.e("HomeViewModel", "Error fetching weather data: ${e.message}")
-                _savedWeather.value = emptyList()
+                _weatherState.value = ApiState.Error("Error fetching weather data: ${e.message}")
             }
         }
     }

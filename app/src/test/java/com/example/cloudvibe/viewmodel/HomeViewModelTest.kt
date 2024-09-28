@@ -7,6 +7,7 @@ import com.example.cloudvibe.model.database.ForecastData
 import com.example.cloudvibe.model.database.WeatherEntity
 import com.example.cloudvibe.model.repository.WeatherRepository
 import com.example.cloudvibe.FakeWeatherData.getFakeForecastResponse
+import com.example.cloudvibe.home.view.ApiState
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -51,35 +52,37 @@ class HomeViewModelTest {
 
 
 // ------------------------------------- weather data test cases -------------------------------------
-    @Test
-    fun testFetchAndDisplayWeather() = runTest {
-        // Scenario 1: Successful response
-        val dummyWeatherList = listOf(
-            WeatherEntity(1, "Alexandria", "EG", "1727521961", 27.74f, "clear sky", 4.75, 55, 1727521961, 1011, 1727495515, 1727538554)
-        )
-        whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
-            .thenReturn(flowOf(dummyWeatherList))
+@Test
+fun testFetchAndDisplayWeather() = runTest {
+    // Scenario 1: Successful response
+    val dummyWeatherList = listOf(
+        WeatherEntity(1, "Alexandria", "EG", "1727521961", 27.74f, "clear sky", 4.75, 55, 1727521961, 1011, 1727495515, 1727538554)
+    )
+    whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
+        .thenReturn(flowOf(dummyWeatherList))
 
-        homeViewModel.fetchAndDisplayWeather(31.255884, 29.987537)
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertEquals(dummyWeatherList, homeViewModel.savedWeather.value)
+    homeViewModel.fetchAndDisplayWeather(31.255884, 29.987537)
+    testDispatcher.scheduler.advanceUntilIdle()
+    assertEquals(ApiState.Success(dummyWeatherList), homeViewModel.weatherState.value)
 
-        // Scenario 2: Empty response
-        whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
-            .thenReturn(flowOf(emptyList()))
+    // Scenario 2: Empty response (returns an empty list)
+    whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
+        .thenReturn(flowOf(emptyList()))
 
-        homeViewModel.fetchAndDisplayWeather(31.255884, 29.987537)
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertEquals(emptyList<WeatherEntity>(), homeViewModel.savedWeather.value)
+    // Check if it's an empty list state when the repository returns an empty list
+    homeViewModel.fetchAndDisplayWeather(31.255884, 29.987537)
+    testDispatcher.scheduler.advanceUntilIdle()
+    assertEquals(ApiState.Success(emptyList<WeatherEntity>()), homeViewModel.weatherState.value) // Expect empty list
 
-        // Scenario 3: An error occurs
-        whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
-            .thenThrow(RuntimeException("Network error"))
+    // Scenario 3: An error occurs when fetching the weather data
+    whenever(repository.getWeatherFromApiAndSaveToLocal(31.255884, 29.987537, "en"))
+        .thenThrow(RuntimeException("Network error"))
 
-        homeViewModel.fetchAndDisplayWeather(31.255884, 29.987537)
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertEquals(emptyList<WeatherEntity>(), homeViewModel.savedWeather.value)
-    }
+    homeViewModel.fetchAndDisplayWeather(31.255884, 29.987537)
+    testDispatcher.scheduler.advanceUntilIdle()
+    assertTrue(homeViewModel.weatherState.value is ApiState.Error) // Check if it's an error state
+}
+
 
 
    // ------------------------------- Forecast Data -------------------------------
