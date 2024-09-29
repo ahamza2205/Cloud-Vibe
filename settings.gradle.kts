@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Cloud Vibe"
+rootProject.name = "Cloud Vibes"
 include(":app")
  

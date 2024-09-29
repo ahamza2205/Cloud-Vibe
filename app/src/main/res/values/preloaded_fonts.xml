@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+
+        <item>@font/akatab</item>
+        <item>@font/akatab_black</item>
+        <item>@font/akatab_bold</item>
+        <item>@font/akatab_extrabold</item>
+        <item>@font/akatab_medium</item>
+        <item>@font/akatab_semibold</item>
+
+    </array>
+</resources>

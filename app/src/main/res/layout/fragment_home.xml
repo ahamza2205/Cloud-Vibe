@@ -1,0 +1,338 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".home.view.HomeFragment">
+
+    <!-- NestedScrollView for the weather data -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/weatherDataLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Local Time in top right corner -->
+            <TextView
+                android:id="@+id/tvLocalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/akatab_semibold"
+                android:text="Local Time: Unknown"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <!-- CardView for Country, Location, Temperature, and Weather Condition -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/weatherCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="16dp"
+                android:background="#80FFFFFF"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <!-- Country TextView -->
+                    <TextView
+                        android:id="@+id/tvCountry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/akatab_medium"
+                        android:text="Country: Unknown"
+                        android:textColor="@color/mid_blue_sky"
+                        android:textSize="28dp" />
+
+                    <!-- Location TextView -->
+                    <TextView
+                        android:id="@+id/tv_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/akatab_bold"
+                        android:text="Location"
+                        android:textColor="@color/mid_blue_sky"
+                        android:textSize="34dp"
+                        android:textStyle="bold" />
+
+                    <!-- LinearLayout for Temperature and Lottie Animation -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <!-- Temperature TextView -->
+                        <TextView
+                            android:id="@+id/tv_temperature"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/akatab_extrabold"
+                            android:text="0°C"
+                            android:textColor="@color/blue"
+                            android:textSize="50dp"
+                            android:textStyle="bold" />
+
+                        <!-- Lottie AnimationView for Weather Condition -->
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/weather_animation"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_marginStart="16dp"
+                            app:lottie_autoPlay="true"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/home" />
+                    </LinearLayout>
+
+                    <!-- Condition TextView -->
+                    <TextView
+                        android:id="@+id/tv_condition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/akatab_bold"
+                        android:text="@string/condition"
+                        android:textColor="@color/light_clouds"
+                        android:textSize="28dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Forecast RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewForecast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingBottom="8dp" />
+
+            <!-- Box for Pressure, Humidity, and Wind -->
+            <LinearLayout
+                android:id="@+id/box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:background="@drawable/rounded_corners">
+
+                <!-- Pressure Animation and Text -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="124dp"
+                    android:layout_marginEnd="32dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/pressureanimationView"
+                        android:layout_width="70dp"
+                        android:layout_height="75dp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/animationpressurewhite"
+                        app:lottie_speed="0.5" />
+
+                    <TextView
+                        android:id="@+id/textView_pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/pressures"
+                        android:textColor="@color/white"
+                        android:textSize="14dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Humidity Animation and Text -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="32dp">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/humidityanimationView"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/animationhumidity"
+                        app:lottie_speed="0.5" />
+
+                    <TextView
+                        android:id="@+id/textView_humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/humiditya"
+                        android:textColor="@color/white"
+                        android:textSize="14dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Wind Animation and Text -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/windanimationView"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/animationwind"
+                        app:lottie_speed="0.5" />
+
+                    <TextView
+                        android:id="@+id/textView_windspeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/WindSpeed"
+                        android:textColor="@color/white"
+                        android:textSize="14dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/day_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+            <!-- Sunrise and Sunset Container -->
+            <LinearLayout
+                android:id="@+id/sunrise_sunset_container"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:padding="16dp"
+                android:gravity="center"
+                android:background="@drawable/rounded_corners">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <!-- Sunrise and Sunset Arc -->
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/sun_arc"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginBottom="0dp"
+                        android:scaleType="fitCenter"
+                        android:scaleX="1.2"
+                        android:scaleY="1.2"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/sun_arc" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                        <!-- Sunrise Time -->
+
+                        <!-- Sunrise Label and Time in the left -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal"
+                            android:gravity="start|center_vertical">
+
+                            <TextView
+                                android:id="@+id/sunrise_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:gravity="center"
+                                android:text="@string/Sunrise"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/textViewSunrise"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="06:48"
+                                android:textColor="@android:color/white"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Sunset Label and Time in the right -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal"
+                            android:gravity="end|center_vertical">
+
+                            <TextView
+                                android:id="@+id/sunset_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                android:text="@string/Sunset"
+                                android:textColor="@android:color/white"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/textViewSunset"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="18:56"
+                                android:textColor="@android:color/white"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- ProgressBar at the top of everything -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:background="@drawable/rounded_recycler_view"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loadingsun" />
+
+
+</FrameLayout>

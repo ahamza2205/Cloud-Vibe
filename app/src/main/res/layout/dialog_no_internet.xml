@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/light_clouds"
+    android:padding="20dp">
+
+    <!-- Lottie Animation at the top -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/dialogAnimation"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:scaleX="2.5"
+        android:scaleY="2.5"
+        app:lottie_rawRes="@raw/nointernet"
+        android:paddingBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/dialogMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingTop="10dp"
+        android:textColor="@color/white"
+        android:paddingBottom="20dp"
+        android:text="@string/internet"
+        android:textSize="12dp" />
+
+    <!-- LinearLayout for two buttons -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/dialogButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFC107"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/dialogRetryButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:backgroundTint="#FF5722"
+            android:text="@string/Retry" />
+    </LinearLayout>
+
+</LinearLayout>

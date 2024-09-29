@@ -1,3 +1,70 @@
-<resources>
-    <string name="app_name">Cloud Vibe</string>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Cloud Vibes</string>
+    <string name="open">Open Cloud Vibe</string>
+    <string name="close">Close Cloud Vibe</string>
+    <string name="windspeed">Wind: 0 km/h</string>
+    <string name="humidity">Humidity: 0%</string>
+    <string name="condition">Condition</string>
+    <string name="pressure">Pressure: 0 hPa</string>
+    <string name="visibility">Visibility: 0 km</string>
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="alerts">Alerts</string>
+    <string name="favorites">Favorites</string>
+    <string name="exit">Exit</string>
+    <string name="location">Location</string>
+    <string name="language">Language</string>
+    <string name="GPS">GPS</string>
+    <string name="Map">Map</string>
+    <string name="English">English</string>
+    <string name="Arabic">Arabic</string>
+    <string name="Temperature">Temperature</string>
+    <string name="Celsius">°C</string>
+    <string name="Kelvin">Kelvin</string>
+    <string name="Fahrenheit">°F</string>
+    <string name="WindSpeed">Wind Speed</string>
+    <string name="MeterSec">Meter / Sec</string>
+    <string name="MileHour">Mile / Hour</string>
+    <string name="Notifications">Notifications</string>
+    <string name="Enable">Enable</string>
+    <string name="Disable">Disable</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="humiditya">Humidity</string>
+    <string name="pressures">Pressure</string>
+    <string name="alarm">Alarm</string>
+    <string name="Itstimetochecktheweather">The time to check the weather</string>
+    <string name="GoToWeathr">Go To Weathr</string>
+    <string name="Stop">Stop</string>
+    <string name="WeatherAlarms">Weather Alarms</string>
+    <string name="Sunrise">Sunrise</string>
+    <string name="Sunset">Sunset</string>
+    <string name="search_results">Search Results</string>
+    <string name="timeralert">time</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="todo">TODO</string>
+    <string name="delete_city">Delete City</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="Kmh">km/h</string>
+    <string name="internet">Please check your internet connection and try again.</string>
+    <string name="Retry">Retry</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

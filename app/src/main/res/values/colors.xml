@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue">#1B365D</color>
+    <color name="white_transparent">#80FFFFFF</color> <!-- 50% transparent white -->
+    <!-- New purple colors -->
+    <color name="dark_blue_background">#0D1A29</color>
+    <color name="mid_blue_sky">#1B365D</color>
+    <color name="light_blue_horizon">#2F4779</color>
+    <color name="light_clouds">#ff0099cc</color>
+    <color name="transpernt">#00FFFFFF</color>
+    <color name="light_blue_horizon_trans">#2F477980</color>
+    <color name="dark_blue_background_trans">#0D1A2980</color>
+
+
 </resources>
