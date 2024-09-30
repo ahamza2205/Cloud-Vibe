@@ -33,8 +33,6 @@ class HomeViewModel @Inject constructor(
     private val _tempUnit = MutableStateFlow<String>("")
     val tempUnit: StateFlow<String> get()=_tempUnit
 
-
-
     fun fetchAndDisplayWeather(lat: Double, lon: Double) {
         val language = repository.getLanguage() ?: "en"
         viewModelScope.launch {
