@@ -34,8 +34,8 @@ class WeatherRepository @Inject constructor(
                 val response = weatherApiService.getCurrentWeather(lat, lon, language)
 
                 val weatherEntity = mapWeatherResponseToEntity(response)
-                weatherDao.deleteAllWeather()  // مسح البيانات القديمة
-                weatherDao.insertWeather(weatherEntity)  // إضافة البيانات الجديدة
+                weatherDao.deleteAllWeather()
+                weatherDao.insertWeather(weatherEntity)
 
                 emitAll(getSavedWeather())
             } catch (e: Exception) {
@@ -57,8 +57,8 @@ class WeatherRepository @Inject constructor(
                 val response = weatherApiService.getForecastWeather(lat, lon, language)
                 response.body()?.let { forecastResponse ->
                     val forecastList = mapForecastResponseToData(forecastResponse)
-                    weatherDao.clearForecasts()  // مسح البيانات القديمة
-                    weatherDao.insertForecast(forecastList)  // إضافة البيانات الجديدة
+                    weatherDao.clearForecasts()
+                    weatherDao.insertForecast(forecastList)
                 }
 
                 // Emit the newly saved forecast data
