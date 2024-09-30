@@ -8,8 +8,15 @@ Welcome to Cloud Vibes, a versatile weather app built for a seamless and customi
 - 🗣️ **Bilingual Support**: Switch between Arabic and English for a seamless user experience.
 
 ## 📸 Screenshots:
-![Screenshot 1](link_to_screenshot1.png)
-![Screenshot 2](link_to_screenshot2.png)
+<div style="display: flex; flex-wrap: wrap;">
+    <img src="https://github.com/user-attachments/assets/9b02cf10-6b4f-4682-91ba-c518c3d5faf8" width="200" />
+    <img src="https://github.com/user-attachments/assets/01aefcc8-c35a-4edb-9acb-3d2d786521c0" width="200" />
+    <img src="https://github.com/user-attachments/assets/9910e4a4-6182-4426-8d4c-5d0e2db877c8" width="200" />
+    <img src="https://github.com/user-attachments/assets/4b3a4aad-0a8c-4b40-8a12-839b896984a2" width="200" />
+    <img src="https://github.com/user-attachments/assets/93b21631-872c-44b1-a718-df9e0a076574" width="200" />
+    <img src="https://github.com/user-attachments/assets/9ca54cf7-3f36-4bf2-8a35-9d83ecf39434" width="200" />
+    <img src="https://github.com/user-attachments/assets/73953f24-9c00-47f4-b6ad-773208bc6854" width="200" />
+</div>
 
 ## 💻 Tech Stack:
 - 🌍 **Location Services**: Implemented using GPS and Google Maps.
@@ -30,4 +37,3 @@ Cloud Vibes is rigorously tested to ensure reliability:
 - 📦 **Compile SDK**: 34
 - 📦 **Min SDK**: 24
 - 📦 **Target SDK**: 34
-
