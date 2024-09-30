@@ -32,84 +32,81 @@
                 android:textColor="@color/white"
                 android:textSize="18dp" />
 
-            <!-- CardView for Country, Location, Temperature, and Weather Condition -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/weatherCardView"
+            <!-- LinearLayout for Country, Location, Temperature, and Weather Condition -->
+            <LinearLayout
+                android:id="@+id/weatherLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:padding="16dp"
-                android:background="#80FFFFFF"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="16dp">
+                android:background="@drawable/rounded_recycler_view"
+                android:orientation="vertical"
+                android:gravity="center"> <!-- Centering content -->
 
+                <!-- Country TextView -->
+                <TextView
+                    android:id="@+id/tvCountry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/akatab_medium"
+                    android:text="Country: Unknown"
+                    android:textColor="@color/white_transparent"
+                    android:textSize="28dp"
+                    android:gravity="center" />
+
+                <!-- Location TextView -->
+                <TextView
+                    android:id="@+id/tv_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/akatab_bold"
+                    android:text="Location"
+                    android:textColor="@color/white"
+                    android:textSize="34dp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <!-- LinearLayout for Temperature and Lottie Animation -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <!-- Country TextView -->
+                    <!-- Temperature TextView -->
                     <TextView
-                        android:id="@+id/tvCountry"
+                        android:id="@+id/tv_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/akatab_medium"
-                        android:text="Country: Unknown"
-                        android:textColor="@color/mid_blue_sky"
-                        android:textSize="28dp" />
+                        android:fontFamily="@font/akatab_extrabold"
+                        android:text="0°C"
+                        android:textColor="@color/white"
+                        android:textSize="50dp"
+                        android:textStyle="bold"
+                        android:gravity="center" />
 
-                    <!-- Location TextView -->
-                    <TextView
-                        android:id="@+id/tv_location"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/akatab_bold"
-                        android:text="Location"
-                        android:textColor="@color/mid_blue_sky"
-                        android:textSize="34dp"
-                        android:textStyle="bold" />
-
-                    <!-- LinearLayout for Temperature and Lottie Animation -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <!-- Temperature TextView -->
-                        <TextView
-                            android:id="@+id/tv_temperature"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/akatab_extrabold"
-                            android:text="0°C"
-                            android:textColor="@color/blue"
-                            android:textSize="50dp"
-                            android:textStyle="bold" />
-
-                        <!-- Lottie AnimationView for Weather Condition -->
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/weather_animation"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            android:layout_marginStart="16dp"
-                            app:lottie_autoPlay="true"
-                            app:lottie_loop="true"
-                            app:lottie_rawRes="@raw/home" />
-                    </LinearLayout>
-
-                    <!-- Condition TextView -->
-                    <TextView
-                        android:id="@+id/tv_condition"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/akatab_bold"
-                        android:text="@string/condition"
-                        android:textColor="@color/light_clouds"
-                        android:textSize="28dp" />
+                    <!-- Lottie AnimationView for Weather Condition -->
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/weather_animation"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_marginStart="16dp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/home" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+
+                <!-- Condition TextView -->
+                <TextView
+                    android:id="@+id/tv_condition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/akatab_bold"
+                    android:text="@string/condition"
+                    android:textColor="@color/light_clouds"
+                    android:textSize="28dp"
+                    android:gravity="center" />
+            </LinearLayout>
 
             <!-- Forecast RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
